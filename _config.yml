@@ -1,11 +1,11 @@
-title:            EbbyPeter
-description:      Whirling around alphabets!.
+title:            How can I do it?
+description:      How can I do it in...!.
 disqus_shortname: ebbypeter
 reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
-url: //ebbypeter.github.io
+url: http://howcanidoit.in
 
 # Owner/author information
 owner:
@@ -14,17 +14,17 @@ owner:
   bio:            "Your bio goes here. It shouldn't be super long but a good two sentences or two should suffice."
   email:          ebby.learning@outlook.com
   # Social networking links used in footer. Update and remove as you like.
-  twitter:        
-  facebook: ebbypeter       
-  github: ebbypeter         
-  stackexchange:  
-  linkedin:       
+  twitter: EbbyPeter       
+  facebook: EbbyPeter      
+  github: EbbyPeter         
+  stackexchange: 
+  linkedin: EbbyPeter      
   instagram:      
   flickr:         
   tumblr:         
   # For Google Authorship https://plus.google.com/authorship
   # google plus id, include the '+', eg +mmistakes
-  google_plus:    +ebbypeter
+  google_plus: +EbbyPeter1
 
 # Background image to be tiled on all pages
 background: 
@@ -48,7 +48,7 @@ sass:
 permalink:   /:categories/:title/
 
 # Amount of post to show on home page
-paginate: 5
+paginate: 10
 
 kramdown:
   auto_ids: true

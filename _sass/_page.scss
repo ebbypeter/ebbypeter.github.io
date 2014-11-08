@@ -328,6 +328,22 @@ body {
 	}
 }
 
+// Header Description 
+// --------------------------------------------------
+#post-description {
+    margin: 0px 0px 0px 5px;
+		@media #{$medium} {
+			margin-left: 20px;
+			margin-right: 20px;
+		}
+		@media #{$large} {
+			max-width: 800px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+    padding-bottom: 8px;
+}
+
 // Post Index 
 // --------------------------------------------------
 #post-index {
