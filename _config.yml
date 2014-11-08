@@ -7,10 +7,12 @@ words_per_minute: 200
 # When testing locally leave blank or use http://localhost:4000
 url: http://howcanidoit.in
 
+#http://howcanidoit.in
+
 # Owner/author information
 owner:
   name:           Ebby Peter
-  avatar:         avatar.jpg
+  avatar:         Ebby.jpg
   bio:            "Your bio goes here. It shouldn't be super long but a good two sentences or two should suffice."
   email:          ebby.learning@outlook.com
   # Social networking links used in footer. Update and remove as you like.
@@ -30,10 +32,10 @@ owner:
 background: 
 
 # Analytics and webmaster tools stuff goes here
-google_analytics:   
-google_verify:      
+google_analytics: UA-56540581-1 
+google_verify: 3-GDL4XGJW3KBT2jaHvr0MXkkiaEHd6JTfLSKjPj3gs     
 # https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
-bing_verify:         
+bing_verify: 61E4F53D58574CE42FCF77D16F95C06D    
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Pacific/Auckland
