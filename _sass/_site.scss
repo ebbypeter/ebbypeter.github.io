@@ -119,7 +119,11 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a 
 
 .note p {
     font-weight: 400;
-    font-size: .75em;
+    font-size: .85em;
+}
+
+.note a, .note p a {
+    color: #fff;
 }
 
 

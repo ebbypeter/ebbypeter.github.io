@@ -5,15 +5,16 @@ reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
-url: http://howcanidoit.in
+url: http://localhost:4000 
 
 #http://howcanidoit.in
+#http://localhost:4000
 
 # Owner/author information
 owner:
   name:           Ebby Peter
   avatar:         Ebby.jpg
-  bio:            "Your bio goes here. It shouldn't be super long but a good two sentences or two should suffice."
+  bio:            "A developer who specializes in SharePoint, WPF, MVC, Windows 8 and Windows Phone Apps; who loves to experiment and learn something new each day, every day."
   email:          ebby.learning@outlook.com
   # Social networking links used in footer. Update and remove as you like.
   twitter: EbbyPeter       
