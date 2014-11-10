@@ -2,6 +2,7 @@
 layout: post
 image:
   feature: abstract-11.jpg
+  featuredImage: /images/InfoPath-SharePoint-List/step6image5.png
 comments: true
 share: true
 date: 2011-04-09

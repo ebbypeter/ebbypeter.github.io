@@ -2,6 +2,7 @@
 layout: post
 image:
   feature: abstract-11.jpg
+  featuredImage: /images/SharePoint-2007-List-Template/image.png
 comments: true
 share: true
 date: 2011-08-25

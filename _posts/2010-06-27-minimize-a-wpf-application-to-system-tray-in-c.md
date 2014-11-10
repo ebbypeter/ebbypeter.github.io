@@ -2,6 +2,7 @@
 layout: post
 image:
   feature: abstract-11.jpg
+  featuredImage: /images/minimize-a-wpf-application/image1.png
 comments: true
 share: true
 modified: 2014-11-09
