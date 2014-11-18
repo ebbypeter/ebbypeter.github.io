@@ -2,26 +2,395 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
 <title type="text">How can I do it?</title>
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
-<link rel="self" type="application/atom+xml" href="http://localhost:4000/feed.xml" />
-<link rel="alternate" type="text/html" href="http://localhost:4000" />
-<updated>2014-11-11T02:31:48+13:00</updated>
-<id>http://localhost:4000/</id>
+<link rel="self" type="application/atom+xml" href="http://howcanidoit.in/feed.xml" />
+<link rel="alternate" type="text/html" href="http://howcanidoit.in" />
+<updated>2014-11-19T06:46:42+13:00</updated>
+<id>http://howcanidoit.in/</id>
 <author>
   <name>Ebby Peter</name>
-  <uri>http://localhost:4000/</uri>
+  <uri>http://howcanidoit.in/</uri>
   <email>ebby.learning@outlook.com</email>
 </author>
 
 
 <entry>
+  <title type="html"><![CDATA[Show Dialog box / Popups programmatically in SharePoint 2013]]></title>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/Show-Popups-Programatically-in-SharePoint" />
+  <id>http://howcanidoit.in/sharepoint/Show-Popups-Programatically-in-SharePoint</id>
+  <published>2014-11-22T00:00:00+13:00</published>
+  <updated>2014-11-22T00:00:00+13:00</updated>
+  <author>
+    <name>Ebby Peter</name>
+    <uri>http://howcanidoit.in</uri>
+    <email>ebby.learning@outlook.com</email>
+  </author>
+  <content type="html">&lt;h2 id=&quot;what-are-we-trying-to-achieve&quot;&gt;What are we trying to achieve&lt;/h2&gt;
+&lt;p&gt;Programmatically show Dialog box / Popups in SharePoint 2013 with custom code / C#.&lt;br /&gt;
+In this post, we will be building two types of dialog boxes.&lt;br /&gt;
+In the first type, clicking on the “OK” button refreshes the page. This is useful in situations where we are displaying a process complete message or similar.&lt;br /&gt;
+In the second type, clicking on the “OK” button redirects you to a different page. This can be used in situations where a confirmation needs to be taken etc..  &lt;/p&gt;
+
+&lt;p&gt;The Result is something like what is shown below.&lt;br /&gt;
+&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Popup.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/Popup.JPG&quot; alt=&quot;Results&quot; /&gt;&lt;/a&gt;  &lt;/p&gt;
+
+&lt;div class=&quot;note tip&quot;&gt;
+  &lt;h5&gt;Tip&lt;/h5&gt;
+  &lt;p&gt;If you are familiar with how Model popup &amp;amp; dialog box works in SharePoint, then you can skip to the implementation part.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;how-it-is-done-in-sharepoint-product&quot;&gt;How it is done in SharePoint Product?&lt;/h2&gt;
+&lt;p&gt;Before we continue, let’s revisit how the OOB dialog boxes are displayed.&lt;br /&gt;
+When a pop up box needs to be displayed, an application page is loaded using an OOB Model Dialog JavaScript.  &lt;/p&gt;
+
+&lt;p&gt;For example, consider clicking the &lt;code&gt;New Document&lt;/code&gt; button in a Document Library; using Fiddler, we can see that the application page called is&lt;br /&gt;
+&lt;em&gt;http://howcanidoit.fourthcoffee.dev&lt;/em&gt;&lt;strong&gt;/_layouts/15/Upload.aspx?List={4B9CFE85-543E-4B64-9D12-CF7ADA634B16}&amp;amp;RootFolder=&amp;amp;IsDlg=1&lt;/strong&gt;  &lt;/p&gt;
+
+&lt;p&gt;The upload page is as follows&lt;br /&gt;
+&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_Normal.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_Normal.JPG&quot; alt=&quot;Upload Page&quot; /&gt;&lt;/a&gt;  &lt;/p&gt;
+
+&lt;p&gt;And opening the url gives us this page&lt;br /&gt;
+&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_AppPage_IsDlg.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_AppPage_IsDlg.JPG&quot; alt=&quot;Upload Page Link&quot; /&gt;&lt;/a&gt;  &lt;/p&gt;
+
+&lt;p&gt;Similarly Check-In calls the page&lt;br /&gt;
+&lt;em&gt;http://howcanidoit.fourthcoffee.dev&lt;/em&gt;&lt;strong&gt;/_layouts/15/checkin.aspx?List={4B9CFE85-543E-4B64-9D12-CF7ADA634B16}&amp;amp;FileName=%2FDocuments%2FRandom%20Document%2Edocx&amp;amp;IsDlg=1&lt;/strong&gt;  &lt;/p&gt;
+
+&lt;p&gt;Well… You get the idea…  &lt;/p&gt;
+
+&lt;p&gt;The url contains some parameters relevant to the page we are visiting and an &lt;strong&gt;&lt;code&gt;IsDlg=1&lt;/code&gt;&lt;/strong&gt; property.  &lt;/p&gt;
+
+&lt;p&gt;The JavaScript APIs to display the dialog box are present in &lt;strong&gt;&lt;code&gt;SP.UI.Dialog.Js&lt;/code&gt;&lt;/strong&gt; file and we can use &lt;code&gt;SP.UI.ModalDialog.showModalDialog(options)&lt;/code&gt; to display the dialog box.&lt;/p&gt;
+
+&lt;div class=&quot;note info&quot;&gt;
+  &lt;h5&gt;Note&lt;/h5&gt;
+  &lt;p&gt;The corresponding images for Check-in is available in the following links &lt;br /&gt;
+    &lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Checkin_Normal.JPG&quot; alt=&quot;Alternate&quot;&gt;CheckIn Page&lt;/a&gt;&lt;br /&gt;
+    &lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Checkin_AppPage_IsDlg.JPG&quot;&gt;CheckIn Page Url&lt;/a&gt;&lt;br /&gt;
+    &lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Checkin_AppPage.JPG&quot;&gt;CheckIn Page url without IsDlg&lt;/a&gt;&lt;br /&gt;
+  &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;the-isdlg-property&quot;&gt;The IsDlg Property&lt;/h2&gt;
+&lt;p&gt;You would have noticed that opening the url gave a basic page and does not look anything like an application page. This is achieved through the IsDlg=1 parameter passed in the query.&lt;br /&gt;
+The &lt;code&gt;IsDlg=1&lt;/code&gt; parameter in the query indicate to SharePoint that the application page is intended to be displayed inside a dialog box. This causes SharePoint to display only the content of the page and hide the SharePoint chrome (Header / footer etc).  &lt;/p&gt;
+
+&lt;p&gt;So opening the Upload Url without the &lt;code&gt;IsDlg=1&lt;/code&gt; parameter gives the following page&lt;br /&gt;
+&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_AppPage.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/Upload_AppPage.JPG&quot; alt=&quot;Upload Page without IsDlg&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+That looks like a normal application page.&lt;br /&gt;
+The Url used was
+&lt;em&gt;http://howcanidoit.fourthcoffee.dev&lt;/em&gt;&lt;strong&gt;/_layouts/15/Upload.aspx?List={4B9CFE85-543E-4B64-9D12-CF7ADA634B16}&amp;amp;RootFolder=&lt;/strong&gt;  &lt;/p&gt;
+
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+&lt;p&gt;That’s enough of theory… Let us implement it…  &lt;/p&gt;
+
+&lt;p&gt;There are four parts to the solution.  &lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Application Page&lt;/strong&gt;	- Displays the message that we need to show.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Wrapper Class&lt;/strong&gt;	- Optionally required to create the correct application page url (with the parameters) and JavaScript function call.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;JavaScript functions&lt;/strong&gt;	- Make sure that the SP.UI.Dialog.Js is loaded and calls the required APIs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Constants Class&lt;/strong&gt;	- Optional. Holds all the constants value.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;application-page&quot;&gt;Application Page&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Aspx Page&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Content&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PageHead&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ContentPlaceHolderID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PlaceHolderAdditionalPageHead&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;Sharepoint:ScriptLink&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Name=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;SP.js&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Localizable=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;false&amp;quot;&lt;/span&gt;  &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;s1&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;LoadAfterUI=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;Sharepoint:ScriptLink&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Name=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;SP.Runtime.js&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Localizable=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;false&amp;quot;&lt;/span&gt;  &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;s2&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;LoadAfterUI=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;/asp:Content&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Content&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PageTitle&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ContentPlaceHolderID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PlaceHolderPageTitle&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;%= MessageTitleQueryValue %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;/asp:Content&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Content&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PageTitleInTitleArea&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ContentPlaceHolderID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PlaceHolderPageTitleInTitleArea&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;%= MessageTitleQueryValue %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;/asp:Content&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Content&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Main&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ContentPlaceHolderID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;PlaceHolderMain&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;min-height: 150px; padding-bottom: 10px;&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;nt&quot;&gt;&amp;lt;span&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt;             &lt;span class=&quot;nt&quot;&gt;&amp;lt;img&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;float: left; width: 50px;&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;%= MessageImageValue %&amp;gt;&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;alt=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;%= MessageImageText %&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt;         &lt;span class=&quot;nt&quot;&gt;&amp;lt;/span&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt;         &lt;span class=&quot;nt&quot;&gt;&amp;lt;p&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;margin-left: 60px; min-height: 100px;&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;             &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;%= MessageContentValue %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;         &lt;span class=&quot;nt&quot;&gt;&amp;lt;/p&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;text-align: right;&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt;         &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;% if (MessageButtonOptions.Equals(&amp;quot;Ok&amp;quot;))
+&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;            { %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt;             &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OkButton&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OK&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;OnClick=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OkButton_OnClick&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;      
+&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;         &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;% }
+&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt;            else if (MessageButtonOptions.Equals(&amp;quot;OkCancel&amp;quot;))
+&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt;            { %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt;             &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OkButton1&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OK&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;OnClick=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;OkButton_OnClick&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt; &lt;span class=&quot;ni&quot;&gt;&amp;amp;nbsp;&amp;amp;nbsp;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt;             &lt;span class=&quot;nt&quot;&gt;&amp;lt;asp:Button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;runat=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;server&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ID=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;CancelButton&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Cancel&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;OnClick=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;CancelButton_OnClick&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;      
+&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt;         &lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;% } %&amp;gt;
+&lt;span class=&quot;lineno&quot;&gt;33&lt;/span&gt;         
+&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;35&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;/asp:Content&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Aspx/C# Code Behind&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c#&quot; data-lang=&quot;c#&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;System.Linq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Microsoft.SharePoint.WebControls&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SharePointPopups.Common&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SharePointPopups.Layouts.SharePointPopups&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;/// &amp;lt;summary&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;/// Show Message Application Page&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;/// &amp;lt;/summary&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;partial&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ShowMessage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LayoutsPageBase&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;//Constants      &lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageButtonOptions&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageContentValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageImageText&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageImageValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageTitleQueryValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Page_Load&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sender&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EventArgs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AllKeys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageContentQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;MessageContentValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageContentQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AllKeys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageTitleQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;MessageTitleQueryValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageTitleQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AllKeys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageTypeQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;33&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;MessageImageText&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageTypeQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;35&lt;/span&gt;                 &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageTypeQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ToUpperInvariant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;36&lt;/span&gt;                 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;37&lt;/span&gt;                     &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ERROR&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;38&lt;/span&gt;                         &lt;span class=&quot;n&quot;&gt;MessageImageValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ErrorImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;39&lt;/span&gt;                         &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;40&lt;/span&gt;                     &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;WARNING&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt;                         &lt;span class=&quot;n&quot;&gt;MessageImageValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WarnImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;42&lt;/span&gt;                         &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;43&lt;/span&gt;                     &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;INFORMATION&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;44&lt;/span&gt;                         &lt;span class=&quot;n&quot;&gt;MessageImageValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InfoImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;45&lt;/span&gt;                         &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;46&lt;/span&gt;                 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;47&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;48&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;49&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AllKeys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageOptionsQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;50&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;51&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;MessageButtonOptions&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;QueryString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MessageOptionsQueryName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;52&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;53&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;54&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;55&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;OkButton_OnClick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sender&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EventArgs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;56&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;57&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ClientScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterStartupScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;PopupScript&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;58&lt;/span&gt;                 &lt;span class=&quot;s&quot;&gt;&amp;quot;SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK, &amp;#39;OK&amp;#39;);&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;59&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;60&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;61&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CancelButton_OnClick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sender&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EventArgs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;62&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;63&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ClientScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterStartupScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;PopupScript&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;64&lt;/span&gt;                 &lt;span class=&quot;s&quot;&gt;&amp;quot;SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.cancel, &amp;#39;Cancel&amp;#39;);&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;65&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;66&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;67&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;wrapper-class&quot;&gt;Wrapper Class&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c#&quot; data-lang=&quot;c#&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SharePointPopups.Common&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PopupOperations&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ShowPopup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;messageType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupButtons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buttons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;refreshPage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pageUrlFormat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;{0}?Type={1}&amp;amp;Title={2}&amp;amp;Message={3}&amp;amp;Options={4}&amp;amp;isDlg=1&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogStringFormat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;openInDialog({0}, {1}, false, true, {2},&amp;#39;{3}&amp;#39;);&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;             &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pageUrl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pageUrlFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ShowMessagePage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;messageType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;buttons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;             &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogString&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dialogStringFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;refreshPage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ToLower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;pageUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ShowPopupAndRedirect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;messageType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupButtons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buttons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;redirectUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pageUrlFormat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;{0}?Type={1}&amp;amp;Title={2}&amp;amp;Message={3}&amp;amp;Options={4}&amp;amp;isDlg=1&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogStringFormat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;openInDialogAndRedirect({0}, {1}, false, true, &amp;#39;{2}&amp;#39;,&amp;#39;{3}&amp;#39;);&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;             &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pageUrl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pageUrlFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ShowMessagePage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;messageType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;buttons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;             &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogString&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dialogStringFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pageUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;redirectUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt;             &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dialogString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;javascript-functions&quot;&gt;JavaScript Functions&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;openInDialog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dlgWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgAllowMaximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgShowClose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;needCallbackFunction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pageUrl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;     &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pageUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;allowMaximize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgAllowMaximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;showClose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgShowClose&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;needCallbackFunction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogReturnValueCallback&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createDelegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CloseDialogCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;     &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SOD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sp.ui.dialog.js&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;SP.UI.ModalDialog.showModalDialog&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;redirectUrlValue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;openInDialogAndRedirect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dlgWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgAllowMaximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgShowClose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pageUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;redirectUrl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;     &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pageUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;allowMaximize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgAllowMaximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;showClose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dlgShowClose&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;     &lt;span class=&quot;nx&quot;&gt;redirectUrlValue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;redirectUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt;     &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogReturnValueCallback&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createDelegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CloseDialogAndRedirectCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt;     &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SOD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sp.ui.dialog.js&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;SP.UI.ModalDialog.showModalDialog&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;33&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CloseDialogCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;returnValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;OK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// refresh parent page&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;35&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SOD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sp.ui.dialog.js&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;SP.UI.ModalDialog.RefreshPage&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;OK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;36&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;37&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;38&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// if user click on Close or Cancel&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;39&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cancel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Do Nothing or add any logic you want &lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;40&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//alert(&amp;quot;else &amp;quot; + dialogResult);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;42&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;43&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;44&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CloseDialogAndRedirectCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;returnValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;45&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;OK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// refresh parent page&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;46&lt;/span&gt;         &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SOD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sp.ui.dialog.js&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;SP.UI.ModalDialog.RefreshPage&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;OK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;47&lt;/span&gt;         &lt;span class=&quot;nb&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;href&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;redirectUrlValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;48&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;49&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// if user click on Close or Cancel&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;50&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dialogResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DialogResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cancel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Do Nothing or add any logic you want &lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;51&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//alert(&amp;quot;else &amp;quot; + dialogResult);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;52&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;53&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;constants-class&quot;&gt;Constants Class&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c#&quot; data-lang=&quot;c#&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SharePointPopups.Common&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Constants&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PopupButtons&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;OkCancel&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PopupType&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Information&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Warning&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;Error&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ErrorImage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/Style%20Library/Custom%20Images/Error.png&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WarnImage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/Style%20Library/Custom%20Images/Warn.png&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;InfoImage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/Style%20Library/Custom%20Images/Info.png&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageTitleQueryName&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageContentQueryName&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Message&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageTypeQueryName&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Type&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MessageOptionsQueryName&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Options&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ShowMessagePage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/_layouts/15/SharePointPopups/ShowMessage.aspx&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;usage&quot;&gt;Usage&lt;/h2&gt;
+
+&lt;p&gt;This is how we call the Dialog box from C#.
+What we are actually doing here is calling the JavaScript Function using &lt;code&gt;Page.ClientScript.RegisterStartupScript&lt;/code&gt;.&lt;br /&gt;
+&lt;code&gt;PopupOperations.ShowPopup&lt;/code&gt; &amp;amp; &lt;code&gt;PopupOperations.ShowPopupAndRedirect&lt;/code&gt; creates the required function call with the appropriate urls.&lt;br /&gt;
+The last parameter in the &lt;code&gt;PopupOperations.ShowPopup&lt;/code&gt; defines if the page needs to be refreshed.&lt;br /&gt;
+Similarly the last parameter in the &lt;code&gt;PopupOperations.ShowPopupAndRedirect&lt;/code&gt; defines the page to which the the user needs to be redirected on pressing “OK”&lt;/p&gt;
+
+&lt;h3 id=&quot;show-popup&quot;&gt;Show Popup&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c#&quot; data-lang=&quot;c#&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ClientScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterStartupScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Popout Script&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;PopupOperations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ShowPopup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Information&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;                     &lt;span class=&quot;s&quot;&gt;&amp;quot;Information Message&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;                     &lt;span class=&quot;s&quot;&gt;&amp;quot;This is a popup with OK Button. Clicking OK Will refresh the page.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;                     &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupButtons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;                     &lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;210&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt;                 &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;show-popup-amp-redirect&quot;&gt;Show Popup &amp;amp; Redirect&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c#&quot; data-lang=&quot;c#&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ClientScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterStartupScript&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Page&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Popout Script&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;                 &lt;span class=&quot;n&quot;&gt;PopupOperations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ShowPopupAndRedirect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;                     &lt;span class=&quot;s&quot;&gt;&amp;quot;Error Message&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;                     &lt;span class=&quot;s&quot;&gt;&amp;quot;This is a popup with OK Button. Clicking OK will redirect to the settings page.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;                     &lt;span class=&quot;n&quot;&gt;Constants&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PopupButtons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;                     &lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;210&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt;                     &lt;span class=&quot;s&quot;&gt;&amp;quot;/_layouts/15/settings.aspx&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt;                 &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;note download&quot;&gt;
+  &lt;h5&gt;Downloads&lt;/h5&gt;
+  &lt;p&gt;The complete source code that demonstrates the concept and all the code that is described in this post is available at GitHub in the following address &lt;br /&gt;
+    &lt;a href=&quot;https://github.com/ebbypeter/SharePointPopups.git&quot; alt=&quot;Sample Source Code&quot;&gt;SharePoint Popups&lt;/a&gt;&lt;br /&gt;
+  &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;solution-description&quot;&gt;Solution Description&lt;/h2&gt;
+&lt;p&gt;The solution structure and the webpart is shown below.&lt;br /&gt;
+Once the solution is deployed, the webpart can be found in the WebParts Gallery under the &lt;code&gt;HowCanIDoIt&lt;/code&gt; category.&lt;/p&gt;
+
+&lt;p class=&quot;pull-right&quot;&gt;&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/SolutionStructure.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/SolutionStructure.JPG&quot; alt=&quot;Solution Structure&quot; /&gt;&lt;/a&gt;  &lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-Popups/Webpart.JPG&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-Popups/Webpart.JPG&quot; alt=&quot;Solution Structure&quot; /&gt;&lt;/a&gt;  &lt;/p&gt;
+
+&lt;div class=&quot;note download&quot;&gt;
+  &lt;h5&gt;Downloads&lt;/h5&gt;
+  &lt;p&gt;The complete source code that was used in this post can be found at &lt;br /&gt;
+    &lt;a href=&quot;https://github.com/ebbypeter/SharePointPopups.git&quot; alt=&quot;Sample Source Code&quot;&gt;SharePoint Popups&lt;/a&gt;&lt;br /&gt;
+  &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;Liked this post or have feedbacks / corrections for me? Let me know in the comments below.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/Show-Popups-Programatically-in-SharePoint&quot;&gt;Show Dialog box / Popups programmatically in SharePoint 2013&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on November 22, 2014.&lt;/p&gt;</content>
+</entry>
+
+
+<entry>
   <title type="html"><![CDATA[My shiny new blog site]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/offbeat/my-shiny-new-blog-site" />
-  <id>http://localhost:4000/offbeat/my-shiny-new-blog-site</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/offbeat/my-shiny-new-blog-site" />
+  <id>http://howcanidoit.in/offbeat/my-shiny-new-blog-site</id>
   <published>2014-11-10T00:00:00+13:00</published>
   <updated>2014-11-10T00:00:00+13:00</updated>
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;Ok, I just finished migrating my blogs from my old site (http://ebbypeter.wordpress.com) to this new site. The question is why I moved?&lt;br /&gt;
@@ -58,20 +427,20 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;And so I am here with my new blog. All ready to blog away… :)&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/offbeat/my-shiny-new-blog-site&quot;&gt;My shiny new blog site&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on November 10, 2014.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/offbeat/my-shiny-new-blog-site&quot;&gt;My shiny new blog site&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on November 10, 2014.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Post Template]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sample/post-template" />
-  <id>http://localhost:4000/sample/post-template</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sample/post-template" />
+  <id>http://howcanidoit.in/sample/post-template</id>
   <updated>2013-05-31T00:00:00-00:00</updated>
   <published>2014-11-08T00:00:00+13:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;Below is just about everything you’ll need to style in the theme. Check the source code to see the many embedded elements within paragraphs.&lt;/p&gt;
@@ -92,7 +461,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Lorem ipsum dolor sit amet, test link adipiscing elit. &lt;strong&gt;This is strong&lt;/strong&gt;. Nullam dignissim convallis est. Quisque aliquam.&lt;/p&gt;
 
-&lt;p class=&quot;pull-right&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/3953273590_704e3899d5_m.jpg&quot; alt=&quot;Smithsonian Image&quot; /&gt;&lt;/p&gt;
+&lt;p class=&quot;pull-right&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/3953273590_704e3899d5_m.jpg&quot; alt=&quot;Smithsonian Image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;This is emphasized&lt;/em&gt;. Donec faucibus. Nunc iaculis suscipit dui. 53 = 125. Water is H&lt;sub&gt;2&lt;/sub&gt;O. Nam sit amet sem. Aliquam libero nisi, imperdiet at, tincidunt nec, gravida vehicula, nisl. The New York Times &lt;cite&gt;(That’s a citation)&lt;/cite&gt;. &lt;u&gt;Underline&lt;/u&gt;. Maecenas ornare tortor. Donec sed tellus eget sapien fringilla nonummy. Mauris a ante. Suspendisse quam sem, consequat at, commodo vitae, feugiat in, nunc. Morbi imperdiet augue quis tellus.&lt;/p&gt;
 
@@ -329,25 +698,25 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 	&lt;figcaption&gt;Three images.&lt;/figcaption&gt;
 &lt;/figure&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sample/post-template&quot;&gt;Post Template&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on November 08, 2014.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sample/post-template&quot;&gt;Post Template&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on November 08, 2014.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Convert a SharePoint 2007 list template STP to SharePoint 2010]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010" />
-  <id>http://localhost:4000/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010" />
+  <id>http://howcanidoit.in/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2011-08-25T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;Last day, when I was trying to use a MOSS 2007 list template STP in SharePoint 2010, I was met with an error.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/SharePoint-2007-List-Template/image.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/SharePoint-2007-List-Template/image.png&quot; alt=&quot;image&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/SharePoint-2007-List-Template/image.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/SharePoint-2007-List-Template/image.png&quot; alt=&quot;image&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Microsoft SharePoint Foundation version 3 templates are not supported in this version of the product.  &lt;/p&gt;
 
@@ -375,26 +744,26 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
   &lt;p&gt;&lt;strong&gt;Step 6:&lt;/strong&gt; Change the extension from .CAB to .STP and upload it&lt;/p&gt;
 &lt;/blockquote&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010&quot;&gt;Convert a SharePoint 2007 list template STP to SharePoint 2010&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on August 25, 2011.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/how-to-convert-a-sharepoint-2007-list-template-stp-to-sharepoint-2010&quot;&gt;Convert a SharePoint 2007 list template STP to SharePoint 2010&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on August 25, 2011.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Create an InfoPath form template to submit data to a SharePoint list. (Part 4 of 4)]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4" />
-  <id>http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4" />
+  <id>http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2011-04-10T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;Please find my previous blog to know more about submitting the InfoPath details to SharePoint&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4)&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4)&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h1 id=&quot;step-7--publishing-infopath-form-template-into-sharepoint&quot;&gt;Step 7 – Publishing InfoPath form template into SharePoint&lt;/h1&gt;
@@ -403,15 +772,15 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;On the Publishing Wizard, Enter the SharePoint site&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image1.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image1.png&quot; alt=&quot;Step7Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image1.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image1.png&quot; alt=&quot;Step7Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and select &lt;em&gt;Administrator –approved form template (advanced)&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image2.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image2.png&quot; alt=&quot;Step7Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image2.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image2.png&quot; alt=&quot;Step7Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and enter a location and file name for the InfoPath form.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image3.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image3.png&quot; alt=&quot;Step7Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image3.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image3.png&quot; alt=&quot;Step7Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and continue with the wizard.&lt;/p&gt;
 
@@ -419,19 +788,19 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;To do this, start SharePoint Central Admin in Administrative mode.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image4.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image4.png&quot; alt=&quot;Step7Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image4.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image4.png&quot; alt=&quot;Step7Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click on General Application Settings and then under InfoPath form services, click upload form template.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image5.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image5.png&quot; alt=&quot;Step7Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image5.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image5.png&quot; alt=&quot;Step7Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Select the published xsn file in the next window and click upload, and next page click OK.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image6.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image6.png&quot; alt=&quot;Step7Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image6.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image6.png&quot; alt=&quot;Step7Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now we are on the Manage Form Templates page. Click the arrow on the right side of our form and click Activate to a Site Collection.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image7.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step7image7.png&quot; alt=&quot;Step7Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image7.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step7image7.png&quot; alt=&quot;Step7Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Select the required site collection and click OK.&lt;/p&gt;
 
@@ -449,28 +818,28 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Please put a comment in case of any concerns, questions or problems.&lt;/p&gt;
 
-&lt;p&gt;The Steps 4 and 5 can be found in my previous blog – &lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The Steps 4 and 5 can be found in my previous blog – &lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4)&lt;/a&gt;&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 4 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on April 10, 2011.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 4 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on April 10, 2011.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Create an InfoPath form template to submit data to a SharePoint list. (Part 3 of 4)]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4" />
-  <id>http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4" />
+  <id>http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2011-04-10T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;The steps on creating the data connections and wiring up of these data connections with the field can be found on my previous blog :&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4)&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4)&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h1 id=&quot;step-6--the-coding--submitting-the-form&quot;&gt;Step 6 – The Coding / Submitting the Form&lt;/h1&gt;
@@ -479,15 +848,15 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Click on the Language button on the Developer Tab in the InfoPath ribbon, and select the code language and the project location.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image1.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image1.png&quot; alt=&quot;Step6Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image1.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image1.png&quot; alt=&quot;Step6Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click on the &lt;em&gt;Submit Options&lt;/em&gt; in the Data Tab.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image2.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image2.png&quot; alt=&quot;Step6Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image2.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image2.png&quot; alt=&quot;Step6Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Select &lt;em&gt;Allow users to submit this form&lt;/em&gt; checkbox and select &lt;em&gt;Perform custom action using Code&lt;/em&gt;. Click on the Edit Code button.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image3.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image3.png&quot; alt=&quot;Step6Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image3.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image3.png&quot; alt=&quot;Step6Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;div class=&quot;note tip&quot;&gt;
   &lt;h5&gt;Tip&lt;/h5&gt;
@@ -496,7 +865,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
     To get it installed, Go to Control Panel, Uninstall a program. Select Office 2010 from the list, right click and Select Change. &lt;br /&gt;
     In the Microsoft InfoPath section, select &lt;i&gt;Visual Studio Tools for Application&lt;/i&gt;, select Run From my Computer, and click Continue.
   &lt;/p&gt;
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image4.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image4.png&quot; alt=&quot;Step6Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image4.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image4.png&quot; alt=&quot;Step6Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Before starting, lets add the following references.&lt;/p&gt;
@@ -537,7 +906,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;The XPath value (/my:myFields/my:Title) can be retrieved by right clicking the required field from the Fields window on the right side of the InfoPath window and clicking ‘&lt;em&gt;Copy XPath&lt;/em&gt;’ (Last but one option)&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image5.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image5.png&quot; alt=&quot;Step6Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image5.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image5.png&quot; alt=&quot;Step6Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Repeating the steps for all the fields, we will get a code as follows.&lt;/p&gt;
 
@@ -685,7 +1054,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Now let us go back to the form and wire up the submit button to submit form. Right click the Submit button, and select properties. On the following dialog box, Select Submit from the action and click apply.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image6.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image6.png&quot; alt=&quot;Step6Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image6.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image6.png&quot; alt=&quot;Step6Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Before I forget, we need to change the security level of the InfoPath form. Click File from the ribbon and click Form Options button.&lt;/p&gt;
 
@@ -693,42 +1062,42 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Click OK.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image7.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image7.png&quot; alt=&quot;Step6Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image7.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image7.png&quot; alt=&quot;Step6Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Your InfoPath is ready to be used now. Press F5 on the Visual Studio and you should see the InfoPath working.&lt;/p&gt;
 
 &lt;p&gt;On Pressing F5, InfoPath will be launched and we might get a dialog box as below. Click Yes.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image8.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image8.png&quot; alt=&quot;Step6Image8&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image8.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image8.png&quot; alt=&quot;Step6Image8&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;This is my InfoPath form.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image9.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step6image9.png&quot; alt=&quot;Step6Image9&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image9.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step6image9.png&quot; alt=&quot;Step6Image9&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;The Steps 4 and 5 can be found in my previous blog – &lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The Steps 4 and 5 can be found in my previous blog – &lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4)&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;The next steps can be found in my next blog -&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4/&quot;&gt; Create an InfoPath form template to submit data to a SharePoint list.(Part 4 of 4) »&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The next steps can be found in my next blog -&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-4-of-4/&quot;&gt; Create an InfoPath form template to submit data to a SharePoint list.(Part 4 of 4) »&lt;/a&gt;&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 3 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on April 10, 2011.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 3 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on April 10, 2011.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Create an InfoPath form template to submit data to a SharePoint list. (Part 2 of 4)]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4" />
-  <id>http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4" />
+  <id>http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2011-04-09T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;The steps on designing the InfoPath form, the specification of the lists and the XML files are in the part 1 of the walkthrough which can be accessed from here :&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 1 of 4)&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 1 of 4)&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h1 id=&quot;step-4--data-connections&quot;&gt;Step 4 – Data Connections&lt;/h1&gt;
@@ -737,27 +1106,27 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;Click on the &lt;em&gt;Data Connections&lt;/em&gt; button on the &lt;em&gt;Data&lt;/em&gt; Tab in the InfoPath ribbon&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image1.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image1.png&quot; alt=&quot;Step4Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image1.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image1.png&quot; alt=&quot;Step4Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click on Add Button on the &lt;em&gt;Data Connections&lt;/em&gt; dialog box, and click on &lt;em&gt;Create a new connection to _and _Receive Data&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image2.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image2.png&quot; alt=&quot;Step4Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image2.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image2.png&quot; alt=&quot;Step4Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and as source select XML document.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image3.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image3.png&quot; alt=&quot;Step4Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image3.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image3.png&quot; alt=&quot;Step4Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next, and on the next page click Resource Files. Click Add and include all the XML files one by one.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image4.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image4.png&quot; alt=&quot;Step4Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image4.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image4.png&quot; alt=&quot;Step4Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click BusinessUnit.xml and click OK. On the Data Connections Wizard, click Next and Finish.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image5.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image5.png&quot; alt=&quot;Step4Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image5.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image5.png&quot; alt=&quot;Step4Image5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;BusinessUnits data connection is now added. Repeat the steps for the other two XML files. This time you can just click on the Resource Files and select the file. We have already added the XML files in the resource files in the previous step.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image6.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image6.png&quot; alt=&quot;Step4Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image6.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image6.png&quot; alt=&quot;Step4Image6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Let us now add the last data connection. This connection is to connect the InfoPath form to the target SharePoint list, which in our case is the Business Requests list.&lt;/p&gt;
 
@@ -767,19 +1136,19 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;For the source of your data, Select &lt;em&gt;SharePoint Library or List&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image7.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image7.png&quot; alt=&quot;Step4Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image7.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image7.png&quot; alt=&quot;Step4Image7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and enter your SharePoint site where you have made the list.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image8.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image8.png&quot; alt=&quot;Step4Image8&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image8.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image8.png&quot; alt=&quot;Step4Image8&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next, and select our list (Business Request) from the lists and libraries.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image9.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image9.png&quot; alt=&quot;Step4Image9&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image9.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image9.png&quot; alt=&quot;Step4Image9&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next and select the required fields that you need to access from the form. I have selected all the fields anyway.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image10.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step4image10.png&quot; alt=&quot;Step4Image10&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image10.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step4image10.png&quot; alt=&quot;Step4Image10&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Next, Next and Finish.&lt;/p&gt;
 
@@ -789,17 +1158,17 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;In the form, right click on the BusinessUnit drop down box and select ‘Drop-Down List Box Properties…’.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image1.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image1.png&quot; alt=&quot;Step5Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image1.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image1.png&quot; alt=&quot;Step5Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;On the List box choices, Select &lt;em&gt;Get choices from an external data source&lt;/em&gt; and Select &lt;em&gt;BusinessUnits&lt;/em&gt; from the Data Source.&lt;/p&gt;
 
 &lt;p&gt;Click on the Icon on the Entries textbox and select BusinessUnit as shown in the image below.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image2.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image2.png&quot; alt=&quot;Step5Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image2.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image2.png&quot; alt=&quot;Step5Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Similarly click on the icon next to Value Text box and Display name text box and select Value and Data respectively.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image3.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step5image3.png&quot; alt=&quot;Step5Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image3.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step5image3.png&quot; alt=&quot;Step5Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Click Ok and repeat the steps for Project Type Drop-Down box. My InfoPath form is available in the zip file.&lt;/p&gt;
 
@@ -815,24 +1184,24 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
   &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;p&gt;The Steps 1, 2 and 3 can be found in my previous blog – &lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 1 of 4)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The Steps 1, 2 and 3 can be found in my previous blog – &lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4/&quot;&gt;« Create an InfoPath form template to submit data to a SharePoint list.(Part 1 of 4)&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;The next steps can be found in my next blog - &lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4) »&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The next steps can be found in my next blog - &lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-3-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 3 of 4) »&lt;/a&gt;&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 2 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on April 09, 2011.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 2 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on April 09, 2011.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Create an InfoPath form template to submit data to a SharePoint list. (Part 1 of 4)]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4" />
-  <id>http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4" />
+  <id>http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2011-04-08T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;The goal of this walkthrough is to create an InfoPath form template to submit data to a SharePoint list. Let us see how to make this in 8 Steps…&lt;/p&gt;
@@ -900,7 +1269,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;The Business Requests list should look like this now.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step1image12.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step1image12.png&quot; alt=&quot;Step1Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step1image12.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step1image12.png&quot; alt=&quot;Step1Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;step-2--creating-the-xml-files&quot;&gt;Step 2 – Creating the XML files&lt;/h1&gt;
 
@@ -939,7 +1308,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 &lt;h1 id=&quot;step-3--creating-infopath-forms&quot;&gt;Step 3 – Creating InfoPath Forms&lt;/h1&gt;
 &lt;p&gt;Launch Microsoft InfoPath Designer 2010, and select Blank Form from the available form templates.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image12.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image12.png&quot; alt=&quot;Step3Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image12.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image12.png&quot; alt=&quot;Step3Image1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Select the required &lt;em&gt;Page Layout Template&lt;/em&gt;, and theme from the &lt;em&gt;Page Design&lt;/em&gt; tab of the ribbon. You can also add table design from the &lt;em&gt;Insert&lt;/em&gt; tab. After this step, we are ready to add in the required fields into the InfoPath form.&lt;/p&gt;
 
@@ -947,7 +1316,7 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;My InfoPath form looks like this now:&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image22.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image22.png&quot; alt=&quot;Step3Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image22.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image22.png&quot; alt=&quot;Step3Image2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now let us add the textboxes, drop downs, buttons and person picker. Remember we have not wired it up to any data source yet. You can get all the required controls from the &lt;em&gt;Home Tab&lt;/em&gt;, &lt;em&gt;Controls&lt;/em&gt; section in the ribbon.&lt;/p&gt;
 
@@ -964,11 +1333,11 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
 
 &lt;p&gt;I have also named the controls and made all the controls except Person/Group Picker cannot be blank. This can be done by right clicking the control and select properties.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image32.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image32.png&quot; alt=&quot;Step3Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image32.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image32.png&quot; alt=&quot;Step3Image3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Add a button in the form and name it Submit. Save the form. Now my form looks like below. The InfoPath form is saved in Zip file.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image42.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/InfoPath-SharePoint-List/step3image42.png&quot; alt=&quot;Step3Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image42.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/InfoPath-SharePoint-List/step3image42.png&quot; alt=&quot;Step3Image4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;div class=&quot;note download&quot;&gt;
   &lt;h5&gt;Download / Links&lt;/h5&gt;
@@ -977,27 +1346,27 @@ We ended up making a beautiful rainbow cake the next day. But that is a story fo
   &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;p&gt;The next steps can be found in my next blog - &lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4) »&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The next steps can be found in my next blog - &lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-2-of-4/&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list.(Part 2 of 4) »&lt;/a&gt;&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 1 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on April 08, 2011.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/sharepoint/create-an-infopath-form-template-to-submit-data-to-a-sharepoint-list-part-1-of-4&quot;&gt;Create an InfoPath form template to submit data to a SharePoint list. (Part 1 of 4)&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on April 08, 2011.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Minimize a WPF application to System Tray in C#]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/wpf/minimize-a-wpf-application-to-system-tray-in-c" />
-  <id>http://localhost:4000/wpf/minimize-a-wpf-application-to-system-tray-in-c</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/wpf/minimize-a-wpf-application-to-system-tray-in-c" />
+  <id>http://howcanidoit.in/wpf/minimize-a-wpf-application-to-system-tray-in-c</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2010-06-27T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;There is no direct way to minimize a WPF application to system tray. This does not means that we cannot do that at all. &lt;/p&gt;
 
-&lt;p class=&quot;pull-right&quot;&gt;&lt;a href=&quot;http://localhost:4000/images/minimize-a-wpf-application/image1.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/minimize-a-wpf-application/thumb/image1.png&quot; alt=&quot;image&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p class=&quot;pull-right&quot;&gt;&lt;a href=&quot;http://howcanidoit.in/images/minimize-a-wpf-application/image1.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/minimize-a-wpf-application/thumb/image1.png&quot; alt=&quot;image&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;
 To minimize WPF app to System Tray/add the Tray notification, we just need to add the “&lt;code&gt;System.Windows.Forms&lt;/code&gt;” and “&lt;code&gt;System.Drawing&lt;/code&gt;” assembly references to your WPF project. Once we add the references, we can create new instance of the “NotifyIcon” class and use it in our WPF application.  &lt;/p&gt;
@@ -1049,25 +1418,25 @@ After we add the references to the WPF application, we have to create a global v
   &lt;p&gt;If you are not interested in the balloon tip, we can omit the BalloonTip and ShowBalloon lines. &lt;/p&gt;
 &lt;/div&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/wpf/minimize-a-wpf-application-to-system-tray-in-c&quot;&gt;Minimize a WPF application to System Tray in C#&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on June 27, 2010.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/wpf/minimize-a-wpf-application-to-system-tray-in-c&quot;&gt;Minimize a WPF application to System Tray in C#&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on June 27, 2010.&lt;/p&gt;</content>
 </entry>
 
 
 <entry>
   <title type="html"><![CDATA[Minimize an application to System Tray in C#]]></title>
- <link rel="alternate" type="text/html" href="http://localhost:4000/c%23/minimize-an-application-to-system-tray-in-c" />
-  <id>http://localhost:4000/c%23/minimize-an-application-to-system-tray-in-c</id>
+ <link rel="alternate" type="text/html" href="http://howcanidoit.in/c%23/minimize-an-application-to-system-tray-in-c" />
+  <id>http://howcanidoit.in/c%23/minimize-an-application-to-system-tray-in-c</id>
   <updated>2014-11-09T00:00:00-00:00</updated>
   <published>2010-06-26T00:00:00+12:00</published>
   
   <author>
     <name>Ebby Peter</name>
-    <uri>http://localhost:4000</uri>
+    <uri>http://howcanidoit.in</uri>
     <email>ebby.learning@outlook.com</email>
   </author>
   <content type="html">&lt;p&gt;To minimize an application form to System Tray, we can use the &lt;strong&gt;NotifyIcon&lt;/strong&gt; control in Visual Studio.&lt;/p&gt;
 
-&lt;p class=&quot;pull-right&quot;&gt;&lt;a href=&quot;http://localhost:4000/images/minimize-an-application/image.png&quot;&gt;&lt;img src=&quot;http://localhost:4000/images/minimize-an-application/thumb/image.png&quot; alt=&quot;NotifyIcon&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p class=&quot;pull-right&quot;&gt;&lt;a href=&quot;http://howcanidoit.in/images/minimize-an-application/image.png&quot;&gt;&lt;img src=&quot;http://howcanidoit.in/images/minimize-an-application/thumb/image.png&quot; alt=&quot;NotifyIcon&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;NotifyIcon&lt;/strong&gt; is in the &lt;strong&gt;System.Windows.Forms&lt;/strong&gt; namespace.
 Drag and drop a &lt;strong&gt;NotifyIcon&lt;/strong&gt; control to your form.&lt;/p&gt;
@@ -1108,7 +1477,7 @@ This time the event to be handled is &lt;code&gt;NotifyIcon MouseDoubleClick&lt;
 &lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
-  &lt;p&gt;&lt;a href=&quot;http://localhost:4000/c%23/minimize-an-application-to-system-tray-in-c&quot;&gt;Minimize an application to System Tray in C#&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://localhost:4000&quot;&gt;How can I do it?&lt;/a&gt; on June 26, 2010.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://howcanidoit.in/c%23/minimize-an-application-to-system-tray-in-c&quot;&gt;Minimize an application to System Tray in C#&lt;/a&gt; was originally published by Ebby Peter at &lt;a href=&quot;http://howcanidoit.in&quot;&gt;How can I do it?&lt;/a&gt; on June 26, 2010.&lt;/p&gt;</content>
 </entry>
 
 </feed>
