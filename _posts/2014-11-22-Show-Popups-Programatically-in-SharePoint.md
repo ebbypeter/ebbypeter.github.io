@@ -15,7 +15,7 @@ tags: [SharePoint, SharePoint 2013, C#, JavaScript]
 ##What are we trying to achieve
 Programmatically show Dialog box / Popups in SharePoint 2013 with custom code / C#.  
 In this post, we will be building two types of dialog boxes.  
-In the first type, clicking on the "OK" button refreshes the page. This is useful in situations where we are displaying a process complete message or similar.  
+In the first type, clicking on the "OK" button refreshes the page. This is useful in situations where we are displaying a process complete message or in similar situations.  
 In the second type, clicking on the "OK" button redirects you to a different page. This can be used in situations where a confirmation needs to be taken etc..  
 
 The Result is something like what is shown below.  
@@ -322,7 +322,7 @@ This is how we call the Dialog box from C#.
 What we are actually doing here is calling the JavaScript Function using `Page.ClientScript.RegisterStartupScript`.  
 `PopupOperations.ShowPopup` &amp; `PopupOperations.ShowPopupAndRedirect` creates the required function call with the appropriate urls.  
 The last parameter in the `PopupOperations.ShowPopup` defines if the page needs to be refreshed.  
-Similarly the last parameter in the `PopupOperations.ShowPopupAndRedirect` defines the page to which the the user needs to be redirected on pressing "OK"
+Similarly the last parameter in the `PopupOperations.ShowPopupAndRedirect` defines the page to which the user needs to be redirected on pressing "OK"
 
 ###Show Popup###
 {% highlight C# linenos %}

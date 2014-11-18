@@ -4,7 +4,7 @@
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://howcanidoit.in/feed.xml" />
 <link rel="alternate" type="text/html" href="http://howcanidoit.in" />
-<updated>2014-11-19T06:46:42+13:00</updated>
+<updated>2014-11-19T07:01:49+13:00</updated>
 <id>http://howcanidoit.in/</id>
 <author>
   <name>Ebby Peter</name>
@@ -27,7 +27,7 @@
   <content type="html">&lt;h2 id=&quot;what-are-we-trying-to-achieve&quot;&gt;What are we trying to achieve&lt;/h2&gt;
 &lt;p&gt;Programmatically show Dialog box / Popups in SharePoint 2013 with custom code / C#.&lt;br /&gt;
 In this post, we will be building two types of dialog boxes.&lt;br /&gt;
-In the first type, clicking on the “OK” button refreshes the page. This is useful in situations where we are displaying a process complete message or similar.&lt;br /&gt;
+In the first type, clicking on the “OK” button refreshes the page. This is useful in situations where we are displaying a process complete message or in similar situations.&lt;br /&gt;
 In the second type, clicking on the “OK” button redirects you to a different page. This can be used in situations where a confirmation needs to be taken etc..  &lt;/p&gt;
 
 &lt;p&gt;The Result is something like what is shown below.&lt;br /&gt;
@@ -330,7 +330,7 @@ The Url used was
 What we are actually doing here is calling the JavaScript Function using &lt;code&gt;Page.ClientScript.RegisterStartupScript&lt;/code&gt;.&lt;br /&gt;
 &lt;code&gt;PopupOperations.ShowPopup&lt;/code&gt; &amp;amp; &lt;code&gt;PopupOperations.ShowPopupAndRedirect&lt;/code&gt; creates the required function call with the appropriate urls.&lt;br /&gt;
 The last parameter in the &lt;code&gt;PopupOperations.ShowPopup&lt;/code&gt; defines if the page needs to be refreshed.&lt;br /&gt;
-Similarly the last parameter in the &lt;code&gt;PopupOperations.ShowPopupAndRedirect&lt;/code&gt; defines the page to which the the user needs to be redirected on pressing “OK”&lt;/p&gt;
+Similarly the last parameter in the &lt;code&gt;PopupOperations.ShowPopupAndRedirect&lt;/code&gt; defines the page to which the user needs to be redirected on pressing “OK”&lt;/p&gt;
 
 &lt;h3 id=&quot;show-popup&quot;&gt;Show Popup&lt;/h3&gt;
 

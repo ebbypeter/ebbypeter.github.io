@@ -19,6 +19,7 @@
 <meta property="og:description" content="{% if page.longDescription %}{{ page.longDescription }}{% else %}{{ site.description }}{% endif %}">
 <meta property="og:url" content="{{ site.url }}{{ page.url }}">
 <meta property="og:site_name" content="{{ site.title }}">
+<meta property="og:image" content="{% if page.image.featuredImage %}{{ site.url }}{{ page.image.featuredImage }}{% else %}{{ site.url }}/images/{{ page.image.feature }}{% endif %}"/>
 
 {% if site.google_verify %}<meta name="google-site-verification" content="{{ site.google_verify }}">{% endif %}
 {% if site.bing_verify %}<meta name="msvalidate.01" content="{{ site.bing_verify }}">{% endif %}
