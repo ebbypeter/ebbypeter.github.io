@@ -1,6 +1,7 @@
 ---
 title: "dotLOG - Bringing Notepad's Best Kept Secret to VS Code"
 date: 2026-01-13
+draft: false
 tags:
   - vscode
   - extension
