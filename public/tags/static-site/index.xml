@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Ebby Builds!</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content on Ebby Builds!</description>
+    <title>Static-Site on Ebby Builds!</title>
+    <link>http://localhost:1313/tags/static-site/</link>
+    <description>Recent content in Static-Site on Ebby Builds!</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 22 Feb 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code</title>
-      <link>http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</guid>
-      <description>Windows Notepad has had a hidden logging trick since 1992 — type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.</description>
-    </item>
+    <atom:link href="http://localhost:1313/tags/static-site/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)</title>
       <link>http://localhost:1313/2026/02/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/</link>

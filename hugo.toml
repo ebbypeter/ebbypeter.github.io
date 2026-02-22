@@ -350,8 +350,8 @@ canonifyurls = true
   # --------------
   [params.comment]
     [params.comment.disqus]
-      enable = true
-      shortname = "hugo-tranquilpeak-theme"
+      enable = false
+      shortname = "ebby-builds"
     [params.comment.gitalk]
       enable = false
       # clientId =
