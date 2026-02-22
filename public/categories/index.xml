@@ -9,17 +9,17 @@
     <lastBuildDate>Sun, 22 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Blueprint</title>
-      <link>http://localhost:1313/categories/blueprint/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/blueprint/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>Build</title>
       <link>http://localhost:1313/categories/build/</link>
       <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/categories/build/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Blueprint</title>
+      <link>http://localhost:1313/categories/blueprint/</link>
+      <pubDate>Tue, 06 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/blueprint/</guid>
       <description></description>
     </item>
   </channel>
