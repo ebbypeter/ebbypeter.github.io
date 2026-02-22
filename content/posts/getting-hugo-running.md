@@ -1,7 +1,7 @@
 ---
 title: "Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156+)"
 draft: true
-date: 2026-02-22
+date: 2026-01-06
 tags:
   - hugo
   - tranquilpeak

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156+)",
+  
+  "image": "http://localhost:1313/images/posts/hugo-tranquilpeak-cover.png",
+  
+  "datePublished": "2026-01-06T00:00:00Z",
+  "dateModified": "2026-01-06T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Ebby Peter",
+    
+    "image": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "http:\/\/localhost:1313\/2026\/01\/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ebby Builds!",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    }
+    
+  },
+  "description": "Tranquilpeak is still one of the most elegant Hugo themes around, but it was built for an older Hugo. Here are all the fixes you need to get it running on Hugo v0.156+, collected in one place so you don\u0026rsquo;t have to go hunting.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.156.0 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Ebby Peter">
+<meta name="keywords" content="">
+<meta name="description" content="Tranquilpeak is still one of the most elegant Hugo themes around, but it was built for an older Hugo. Here are all the fixes you need to get it running on Hugo v0.156&#43;, collected in one place so you don&rsquo;t have to go hunting.">
+
+
+<meta property="og:description" content="Tranquilpeak is still one of the most elegant Hugo themes around, but it was built for an older Hugo. Here are all the fixes you need to get it running on Hugo v0.156&#43;, collected in one place so you don&rsquo;t have to go hunting.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)">
+<meta name="twitter:title" content="Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)">
+<meta property="og:url" content="http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/">
+<meta property="twitter:url" content="http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/">
+<meta property="og:site_name" content="Ebby Builds!">
+<meta property="og:description" content="Tranquilpeak is still one of the most elegant Hugo themes around, but it was built for an older Hugo. Here are all the fixes you need to get it running on Hugo v0.156&#43;, collected in one place so you don&rsquo;t have to go hunting.">
+<meta name="twitter:description" content="Tranquilpeak is still one of the most elegant Hugo themes around, but it was built for an older Hugo. Here are all the fixes you need to get it running on Hugo v0.156&#43;, collected in one place so you don&rsquo;t have to go hunting.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2026-01-06T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2026-01-06T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="Blueprint">
+    
+  
+  
+    
+      <meta property="article:tag" content="hugo">
+    
+      <meta property="article:tag" content="tranquilpeak">
+    
+      <meta property="article:tag" content="blogging">
+    
+      <meta property="article:tag" content="static-site">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@ebbypeter">
+
+
+  <meta name="twitter:creator" content="@ebbypeter">
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+
+
+
+
+
+  <meta property="og:image" content="http://localhost:1313/images/posts/hugo-tranquilpeak-cover.png">
+  <meta property="twitter:image" content="http://localhost:1313/images/posts/hugo-tranquilpeak-cover.png">
+
+
+    <title>Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)</title>
+
+    <link rel="icon" href="http://localhost:1313/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://localhost:1313/" aria-label="Go to homepage">Ebby Builds!</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://localhost:1313/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://localhost:1313/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ebby Peter</h4>
+        
+          <h5 class="sidebar-profile-bio">Blueprint. Build. Ship. Repeat!</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/ebbypeter/" target="_blank" rel="noopener" title="LinkedIn">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-linkedin" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">LinkedIn</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="Resume">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-briefcase" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Resume</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2026-01-06T00:00:00Z">
+        
+  January 6, 2026
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://localhost:1313/categories/blueprint">Blueprint</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>Tranquilpeak is still one of the most elegant Hugo themes around. Clean typography, a beautiful cover image sidebar, and a thoughtful reading experience. The problem? It was built for an older Hugo, and modern Hugo (v0.114 onwards in particular) introduced several breaking changes that the theme hasn&rsquo;t kept pace with.</p>
+<p>When I set up this blog I hit every one of these issues in sequence. This post collects all the fixes in one place so you don&rsquo;t have to go hunting.</p>
+<hr>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Hugo extended v0.100+ (tested on v0.156.0)</li>
+<li>Git</li>
+<li>Basic command line comfort</li>
+</ul>
+<hr>
+<h2 id="step-1-create-your-hugo-site-and-make-an-initial-commit">Step 1: Create Your Hugo Site and Make an Initial Commit</h2>
+<p>Start by creating a new Hugo site as you normally would:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hugo new site quickstart
+</span></span><span style="display:flex;"><span>cd quickstart
+</span></span><span style="display:flex;"><span>git init
+</span></span></code></pre></div><p>Here is the first trap: <strong><code>git subtree</code> requires at least one commit in the repository</strong>. It needs <code>HEAD</code> to exist as a valid reference. If you try to add the theme before making any commit, you will get this error:</p>
+<pre tabindex="0"><code>fatal: ambiguous argument &#39;HEAD&#39;: unknown revision or path not in the working tree.
+fatal: working tree has modifications. Cannot add.
+</code></pre><p>Fix it by making an initial commit first. If your repo has no files yet, an empty commit works fine:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git commit --allow-empty -m <span style="color:#e6db74">&#34;Initial commit&#34;</span>
+</span></span></code></pre></div><hr>
+<h2 id="step-2-add-tranquilpeak-via-git-subtree">Step 2: Add Tranquilpeak via git subtree</h2>
+<p>Using <code>git subtree</code> rather than <code>git submodule</code> means the theme files live directly in your repo. No separate clone step needed for collaborators or CI/CD pipelines, and you can freely modify the theme files and commit them — which you will need to do.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git subtree add --prefix themes/tranquilpeak <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  git@github.com:kakawait/hugo-tranquilpeak-theme.git <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  master --squash
+</span></span></code></pre></div><p>Note the prefix carefully: <strong><code>themes/tranquilpeak</code> not <code>./themes/tranquilpeak</code></strong>. The leading <code>./</code> causes a subtle path error:</p>
+<pre tabindex="0"><code>error: invalid path &#39;./themes/tranquilpeak/.eslintignore&#39;
+</code></pre><p>Drop the <code>./</code> and it works cleanly.</p>
+<hr>
+<h2 id="step-3-minimum-viable-hugotoml">Step 3: Minimum Viable hugo.toml</h2>
+<p>Before building, set up a working configuration. Create or replace <code>hugo.toml</code> with this baseline:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">baseURL</span> = <span style="color:#e6db74">&#34;https://yourdomain.com/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">languageCode</span> = <span style="color:#e6db74">&#34;en-us&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">title</span> = <span style="color:#e6db74">&#34;Ebby Builds&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">theme</span> = <span style="color:#e6db74">&#34;tranquilpeak&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">paginate</span> = <span style="color:#ae81ff">7</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">author</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span> = <span style="color:#e6db74">&#34;Ebby Peter&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">gravatarEmail</span> = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">params</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">subtitle</span> = <span style="color:#e6db74">&#34;Blueprint. Build. Ship. Repeat.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">authorName</span> = <span style="color:#e6db74">&#34;Ebby Peter&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">gravatarEmail</span> = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">disqusShortname</span> = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">description</span> = <span style="color:#e6db74">&#34;Cloud architecture, enterprise design, and open source&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">menu</span>]
+</span></span><span style="display:flex;"><span>  [[<span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span>]]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">identifier</span> = <span style="color:#e6db74">&#34;home&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> = <span style="color:#e6db74">&#34;Home&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  [[<span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span>]]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">identifier</span> = <span style="color:#e6db74">&#34;about&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> = <span style="color:#e6db74">&#34;About&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/about/&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><p>The <code>[author]</code> block and the params fields are important — we will explain why in the next steps.</p>
+<hr>
+<h2 id="step-4-fix-siteauthor--removed-in-modern-hugo">Step 4: Fix <code>.Site.Author</code> — Removed in Modern Hugo</h2>
+<p>If you try to build now you will hit this:</p>
+<pre tabindex="0"><code>execute of template failed: template: _partials/head.html:13:12:
+executing &#34;_partials/head.html&#34; at &lt;.Site.Author.gravatarEmail&gt;:
+can&#39;t evaluate field Author in type page.Site
+</code></pre><p>Hugo removed <code>.Site.Author</code> as a top-level accessor. It no longer works. The fix is to replace all references in the theme templates to use <code>.Site.Params</code> instead.</p>
+<p>First, see how many references you are dealing with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -rn <span style="color:#e6db74">&#34;\.Site\.Author&#34;</span> themes/tranquilpeak/layouts/
+</span></span></code></pre></div><p>Then replace them all in one pass:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find themes/tranquilpeak/layouts/ -type f -name <span style="color:#e6db74">&#34;*.html&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -exec sed -i <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;s/\.Site\.Author\.gravatarEmail/.Site.Params.gravatarEmail/g;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   s/\.Site\.Author\.name/.Site.Params.authorName/g&#39;</span> <span style="color:#f92672">{}</span> +
+</span></span></code></pre></div><p>Verify no references remain:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -rn <span style="color:#e6db74">&#34;\.Site\.Author&#34;</span> themes/tranquilpeak/layouts/
+</span></span></code></pre></div><hr>
+<h2 id="step-5-fix-sitedisqusshortname--also-removed">Step 5: Fix <code>.Site.DisqusShortname</code> — Also Removed</h2>
+<p>A similar error will appear for Disqus:</p>
+<pre tabindex="0"><code>execute of template failed: template: _partials/post/actions.html:65:104:
+executing &#34;_partials/post/actions.html&#34; at &lt;.Site.DisqusShortname&gt;:
+can&#39;t evaluate field DisqusShortname in type page.Site
+</code></pre><p>Same pattern, same fix:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find themes/tranquilpeak/layouts/ -type f -name <span style="color:#e6db74">&#34;*.html&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -exec sed -i <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;s/\.Site\.DisqusShortname/.Site.Params.disqusShortname/g&#39;</span> <span style="color:#f92672">{}</span> +
+</span></span></code></pre></div><p>If you are not using Disqus, just leave <code>disqusShortname = &quot;&quot;</code> in your params as set in Step 3.</p>
+<hr>
+<h2 id="step-6-scan-for-any-remaining-deprecated-references">Step 6: Scan for Any Remaining Deprecated References</h2>
+<p>At this point the most common errors are fixed, but it is worth a broader scan to catch anything else before it bites you:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -rn <span style="color:#e6db74">&#34;\.Site\.&#34;</span> themes/tranquilpeak/layouts/ <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  | grep -v <span style="color:#e6db74">&#34;\.Site\.Params\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Title\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.BaseURL\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Language\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Pages\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.RegularPages\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Data\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Menus\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Home\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Taxonomies\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.IsMultiLingual\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.IsServer\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           \|\.Site\.Hugo&#34;</span>
+</span></span></code></pre></div><p>Any results here are candidates for the same <code>Params</code>-based fix pattern.</p>
+<hr>
+<h2 id="step-7-build-and-verify">Step 7: Build and Verify</h2>
+<p>Start the development server:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hugo server -D
+</span></span></code></pre></div><p>You should see output like:</p>
+<pre tabindex="0"><code>Start building sites …
+Built in 12 ms
+Web Server is available at http://localhost:1313/
+</code></pre><p>Navigate to <code>http://localhost:1313</code> and you should have a working Tranquilpeak site.</p>
+<hr>
+<h2 id="step-8-commit-the-patched-theme">Step 8: Commit the Patched Theme</h2>
+<p>Because you added the theme via <code>git subtree</code>, the patched template files live directly in your repo. Commit them so the fixes are preserved:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git add themes/tranquilpeak/
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;fix: patch Tranquilpeak templates for Hugo v0.156+ compatibility
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- Replace .Site.Author.* with .Site.Params equivalents
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- Replace .Site.DisqusShortname with .Site.Params.disqusShortname
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- Fixes compatibility with Hugo v0.114+ breaking changes&#34;</span>
+</span></span></code></pre></div><hr>
+<h2 id="summary-of-fixes">Summary of Fixes</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Error</th>
+          <th>Root Cause</th>
+          <th>Fix</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>fatal: ambiguous argument 'HEAD'</code></td>
+          <td>No initial commit before <code>git subtree add</code></td>
+          <td><code>git commit --allow-empty -m &quot;Initial commit&quot;</code></td>
+      </tr>
+      <tr>
+          <td><code>error: invalid path './themes/...'</code></td>
+          <td>Leading <code>./</code> in subtree prefix</td>
+          <td>Use <code>themes/tranquilpeak</code> not <code>./themes/tranquilpeak</code></td>
+      </tr>
+      <tr>
+          <td><code>can't evaluate field Author in type page.Site</code></td>
+          <td><code>.Site.Author</code> removed in Hugo v0.114+</td>
+          <td>Replace with <code>.Site.Params.authorName</code> / <code>.Site.Params.gravatarEmail</code></td>
+      </tr>
+      <tr>
+          <td><code>can't evaluate field DisqusShortname in type page.Site</code></td>
+          <td><code>.Site.DisqusShortname</code> removed</td>
+          <td>Replace with <code>.Site.Params.disqusShortname</code></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="wrapping-up">Wrapping Up</h2>
+<p>None of these errors are difficult to fix once you know what they are — the frustration is hitting them one by one and having to piece the solution together from scattered GitHub issues and forum posts. Hopefully this post saves you that afternoon.</p>
+<p>If you are customising the theme further (custom cover images, menu configuration, social links), the Tranquilpeak documentation is still reasonably accurate for those areas — the breaking changes are mostly confined to the deprecated <code>.Site.*</code> accessors covered here.</p>
+<p><em>Have you hit a different Tranquilpeak error on modern Hugo? Drop a comment below.</em></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/hugo/">hugo</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/tranquilpeak/">tranquilpeak</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/blogging/">blogging</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/static-site/">static-site</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" data-tooltip="dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code" aria-label="NEXT: dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2026 Ebby Peter. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" data-tooltip="dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code" aria-label="NEXT: dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fgetting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fgetting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fgetting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fgetting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fgetting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ebby Peter</h4>
+    
+      <div id="about-card-bio">Blueprint. Build. Ship. Repeat!</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Cloud Architect | Cloud Consultant | Cloud Enthusiast
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        Wellington, New Zealand
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('http://localhost:1313/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="http://localhost:1313/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+
