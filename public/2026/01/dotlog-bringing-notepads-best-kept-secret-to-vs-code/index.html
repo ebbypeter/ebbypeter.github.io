@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "dotLOG - Bringing Notepad's Best Kept Secret to VS Code",
+  
+  "image": "http://localhost:1313/images/posts/VSCode-Logo.svg",
+  
+  "datePublished": "2026-01-13T00:00:00Z",
+  "dateModified": "2026-01-13T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Ebby Peter",
+    
+    "image": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "http:\/\/localhost:1313\/2026\/01\/dotlog-bringing-notepads-best-kept-secret-to-vs-code\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ebby Builds!",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    }
+    
+  },
+  "description": "Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.156.0 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Ebby Peter">
+<meta name="keywords" content="">
+<meta name="description" content="Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.">
+
+
+<meta property="og:description" content="Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code">
+<meta name="twitter:title" content="dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code">
+<meta property="og:url" content="http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/">
+<meta property="twitter:url" content="http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/">
+<meta property="og:site_name" content="Ebby Builds!">
+<meta property="og:description" content="Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.">
+<meta name="twitter:description" content="Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2026-01-13T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2026-01-13T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="Build">
+    
+  
+  
+    
+      <meta property="article:tag" content="vscode">
+    
+      <meta property="article:tag" content="extension">
+    
+      <meta property="article:tag" content="open-source">
+    
+      <meta property="article:tag" content="productivity">
+    
+      <meta property="article:tag" content="tools">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@ebbypeter">
+
+
+  <meta name="twitter:creator" content="@ebbypeter">
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+
+
+
+
+
+  <meta property="og:image" content="http://localhost:1313/images/posts/VSCode-Logo.svg">
+  <meta property="twitter:image" content="http://localhost:1313/images/posts/VSCode-Logo.svg">
+
+
+    <title>dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code</title>
+
+    <link rel="icon" href="http://localhost:1313/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://localhost:1313/" aria-label="Go to homepage">Ebby Builds!</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://localhost:1313/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://localhost:1313/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ebby Peter</h4>
+        
+          <h5 class="sidebar-profile-bio">Blueprint. Build. Ship. Repeat!</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/ebbypeter/" target="_blank" rel="noopener" title="LinkedIn">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-linkedin" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">LinkedIn</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="Resume">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-briefcase" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Resume</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2026-01-13T00:00:00Z">
+        
+  January 13, 2026
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://localhost:1313/categories/build">Build</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>There is a feature in Windows Notepad that has existed since 1992. Most developers have used Notepad at some point in their lives and never once discovered it. It is not hidden behind a menu or a settings toggle. It just works silently, invisibly, if you know the one thing to type.</p>
+<p>Open Notepad. Type <code>.LOG</code> as the very first line. Save the file. Close it. Now reopen it.</p>
+<p>A timestamp has appeared at the bottom. Every time you open that file, a new timestamp is appended automatically. It turns a plain text file into an effortless, chronological log. No app, no database, no configuration. Just a file that remembers when you were last there.</p>
+<p>That feature has been sitting in Notepad since Windows 3.1. Over thirty years. Hiding in plain sight.</p>
+<p>When I moved my day-to-day notes workflow into VS Code, I lost it. And I missed it more than I expected.</p>
+<p>So I built <strong>dotLOG</strong>.</p>
+<hr>
+<h2 id="the-log-trick---a-30-year-old-secret">The <code>.LOG</code> Trick - A 30-Year-Old Secret</h2>
+<p>Here is how it works in Notepad, step by step:</p>
+<ol>
+<li>Open Notepad</li>
+<li>Type <code>.LOG</code> on the very first line (must be the first line, must be uppercase)</li>
+<li>Save and close the file</li>
+<li>Reopen the file</li>
+</ol>
+<p>You will see something like this appended at the bottom:</p>
+<pre tabindex="0"><code>.LOG
+
+11:42 AM 22/02/2026
+</code></pre><p>Close it. Open it again:</p>
+<pre tabindex="0"><code>.LOG
+
+11:42 AM 22/02/2026
+
+11:51 AM 22/02/2026
+</code></pre><p>Every time the file is opened, Notepad checks if the first line is <code>.LOG</code>, appends the current date and time, and positions your cursor at the end - ready for you to type your next entry. It is append-only by design. Chronological by nature. The structure enforces the habit without requiring any discipline from you.</p>
+<p>I have used this pattern for years. Incident notes during an outage. Quick decision records. Meeting scratch pads. Daily work logs. The simplicity is precisely the point - it gets completely out of your way and just captures.</p>
+<hr>
+<h2 id="why-it-works-so-well">Why It Works So Well</h2>
+<p>Most note-taking tools ask something of you before you can start. Open the app. Create a new note. Pick a folder. Name it. Choose a template. By the time you have done all of that, the thought you were trying to capture has either changed shape or disappeared entirely.</p>
+<p>The <code>.LOG</code> pattern asks almost nothing. The file is already open (or takes one click to open). You type. You save. The timestamp is handled. The chronology is guaranteed.</p>
+<p>It also ages extraordinarily well. Plain text files from 1992 are still perfectly readable today. They are grep-able, diffable, portable across every operating system, and will outlive every proprietary note-taking app that has ever promised to revolutionise your workflow.</p>
+<p>There is something quietly profound about a feature that has survived thirty years of Windows versions completely unchanged. It was right the first time.</p>
+<hr>
+<h2 id="the-problem-nobody-lives-in-notepad-anymore">The Problem: Nobody Lives in Notepad Anymore</h2>
+<p>As a developer, I live in VS Code. My terminal is there, my code is there, my git history is there. It made sense to keep my working notes there too - scratch files, investigation notes, architecture thinking. Quick files I open, scribble in, and leave pinned in a tab.</p>
+<p>But VS Code does not know about <code>.LOG</code>. Open a file that starts with <code>.LOG</code> in VS Code and nothing happens. It is just a text file. The one behaviour I wanted most was the one thing the editor did not do.</p>
+<p>There are VS Code extensions for journaling. Extensions for daily notes. Extensions for Zettelkasten and second brains and linked thinking graphs. They are all thoughtful tools that ask a lot of you in return.</p>
+<p>I did not want any of that. I wanted the Notepad trick. One specific behaviour, applied to one specific file naming pattern, with zero configuration.</p>
+<p>I could not find an extension that did it. So I built one.</p>
+<hr>
+<h2 id="introducing-dotlog">Introducing dotLOG</h2>
+<p><strong>dotLOG</strong> is a VS Code extension that replicates Notepad&rsquo;s <code>.LOG</code> behaviour exactly.</p>
+<p>Create any file whose name starts with <code>.LOG</code> - whether that is literally <code>.LOG</code>, or <code>daily.LOG</code>, or <code>incident-2026-02-22.LOG</code> - and dotLOG will automatically append a timestamp every time you open or save the file, positioning your cursor at the end ready for your next entry.</p>
+<p>That is the entire feature. There is no settings panel. There is no configuration file. There are no options to choose. It installs and immediately works, exactly the way Notepad has worked since 1992.</p>
+<h3 id="installing-dotlog">Installing dotLOG</h3>
+<p>Search for <strong>dotLOG</strong> in the VS Code Extensions panel (<code>Ctrl+Shift+X</code>), or install it from the command line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>code --install-extension cloudfractal.dotlog
+</span></span></code></pre></div><p>Or find it on the <a href="https://marketplace.visualstudio.com/items?itemName=cloudfractal.dotlog">VS Code Marketplace</a>.</p>
+<h3 id="using-it">Using it</h3>
+<ol>
+<li>Create a new file and name it anything ending in <code>.LOG</code> - for example <code>work.LOG</code></li>
+<li>Start typing your first entry</li>
+<li>Save and close the file</li>
+<li>Reopen it - a timestamp has been appended and your cursor is waiting at the end</li>
+</ol>
+<p>From that point on, every time you open the file, a new timestamp appears. Your log grows chronologically, automatically, with no effort beyond typing your actual notes.</p>
+<hr>
+<h2 id="how-it-works-under-the-hood">How It Works Under the Hood</h2>
+<p>For those curious about what is happening behind the scenes - dotLOG is a straightforward VS Code extension that hooks into two editor lifecycle events.</p>
+<p><strong>The trigger condition</strong> is simple: when a document is opened or saved, dotLOG checks whether the filename starts with <code>.LOG</code> (case-insensitive). If it does not match, dotLOG does nothing and gets out of the way entirely.</p>
+<p><strong>The timestamp insertion</strong> happens at the end of the document. dotLOG appends a blank line followed by the current date and time in a human-readable format, then moves the cursor to the very end - the same behaviour Notepad has always used.</p>
+<p>The two VS Code API events involved are <code>onDidOpenTextDocument</code> and <code>onDidSaveTextDocument</code>. Both are lightweight document events that fire reliably without any polling or background work.</p>
+<p>There is intentionally no configuration surface. No settings to expose means no decisions to make, no documentation to maintain, and no surface area for things to go wrong. The extension is around 50 lines of meaningful code. Small enough to read in five minutes, simple enough to trust completely.</p>
+<p>The full source is on GitHub at <a href="https://github.com/ebbypeter/dotLOG">github.com/ebbypeter/dotLOG</a> if you want to dig in.</p>
+<hr>
+<h2 id="real-world-use-cases">Real-World Use Cases</h2>
+<p>Here is how I actually use <code>.LOG</code> files day to day:</p>
+<p><strong>Daily work log.</strong> A file called <code>work.LOG</code> that stays pinned in my editor. At the start of each day I open it, the timestamp appears, and I jot down what I am planning to work on. By end of day I have a running record of what actually happened. Useful for weekly summaries, timesheets, and the inevitable &ldquo;wait, when did we do that?&rdquo; conversations.</p>
+<p><strong>Incident investigation notes.</strong> When something is on fire and I am in the middle of diagnosing it, I open <code>incident.LOG</code> and start capturing what I am seeing, what I am trying, and what the results are. The automatic timestamps mean I never have to manually record when I ran a command or observed a behaviour. When the incident is over, I have a timestamped record ready for a postmortem.</p>
+<p><strong>Decision journal.</strong> Architecture decisions, technology choices, tradeoffs considered. Captured in the moment with the timestamp preserving the when alongside the what. Future-me (and future teammates) have context that no Confluence page ever quite manages to capture.</p>
+<p><strong>Meeting scratch pad.</strong> A quick file open before a call, timestamp already waiting, type during the meeting, done. No template, no structure imposed - just whatever I needed to capture, when I captured it.</p>
+<p><strong>Debugging session notes.</strong> What I tried, in what order, what happened. When you are deep in a problem across multiple sessions, having a timestamped record of what you have already eliminated is surprisingly valuable.</p>
+<hr>
+<h2 id="getting-started-in-60-seconds">Getting Started in 60 Seconds</h2>
+<ol>
+<li>Install dotLOG from the <a href="https://marketplace.visualstudio.com/items?itemName=cloudfractal.dotlog">VS Code Marketplace</a></li>
+<li>Create a new file - name it <code>.LOG</code>, <code>daily.LOG</code>, <code>work.LOG</code>, or anything that starts with <code>.LOG</code></li>
+<li>Type something. Save. Close. Reopen.</li>
+<li>The timestamp is there. You are done.</li>
+</ol>
+<p>No configuration. No sign-up. No sync. Just a file on your disk that knows when you were last there.</p>
+<hr>
+<h2 id="it-is-open-source">It Is Open Source</h2>
+<p>dotLOG is open source under the MIT licence. The repository is at <a href="https://github.com/ebbypeter/dotLOG">github.com/ebbypeter/dotLOG</a>.</p>
+<p>If you find a bug, open an issue. If you have an idea - timestamp format options, perhaps, or configurable trigger patterns - pull requests are welcome. Keep in mind that the guiding philosophy is deliberate minimalism: every feature addition should be measured against whether it keeps the essential zero-friction nature of the tool.</p>
+<hr>
+<h2 id="closing-thought">Closing Thought</h2>
+<p>The <code>.LOG</code> trick in Notepad is an example of quiet design. One line of text. No UI. No documentation needed. Completely discoverable by accident. Useful enough to survive unchanged for over thirty years.</p>
+<p>dotLOG exists because I wanted that same experience inside the editor I actually use every day. If you have ever kept notes in a plain text file and wished they just knew when you wrote them, give it a try.</p>
+<p>It takes about thirty seconds to install and nothing to configure.</p>
+<p><em>That is kind of the whole point.</em></p>
+<hr>
+<p><em>dotLOG is available on the <a href="https://marketplace.visualstudio.com/items?itemName=cloudfractal.dotlog">VS Code Marketplace</a>. Source code on <a href="https://github.com/ebbypeter/dotLOG">GitHub</a>. Issues and contributions welcome.</em>
+clear</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/vscode/">vscode</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/extension/">extension</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/open-source/">open-source</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/productivity/">productivity</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/tools/">tools</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/" data-tooltip="Autoscaling Is Not a Recovery Strategy" aria-label="NEXT: Autoscaling Is Not a Recovery Strategy">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" data-tooltip="Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)" aria-label="PREVIOUS: Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2026 Ebby Peter. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/" data-tooltip="Autoscaling Is Not a Recovery Strategy" aria-label="NEXT: Autoscaling Is Not a Recovery Strategy">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/getting-hugo-running-with-tranquilpeak-on-modern-hugo-v0.156/" data-tooltip="Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)" aria-label="PREVIOUS: Getting Hugo Running with Tranquilpeak on Modern Hugo (v0.156&#43;)">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fdotlog-bringing-notepads-best-kept-secret-to-vs-code%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fdotlog-bringing-notepads-best-kept-secret-to-vs-code%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fdotlog-bringing-notepads-best-kept-secret-to-vs-code%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fdotlog-bringing-notepads-best-kept-secret-to-vs-code%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fdotlog-bringing-notepads-best-kept-secret-to-vs-code%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ebby Peter</h4>
+    
+      <div id="about-card-bio">Blueprint. Build. Ship. Repeat!</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Cloud Architect | Cloud Consultant | Cloud Enthusiast
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        Wellington, New Zealand
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('http://localhost:1313/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="http://localhost:1313/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

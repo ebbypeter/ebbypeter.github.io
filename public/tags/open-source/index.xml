@@ -6,14 +6,14 @@
     <description>Recent content in Open-Source on Ebby Builds!</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 22 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 13 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/open-source/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>dotLOG - Bringing Notepad&#39;s Best Kept Secret to VS Code</title>
-      <link>http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/2026/02/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</guid>
-      <description>Windows Notepad has had a hidden logging trick since 1992 — type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.</description>
+      <link>http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</link>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/01/dotlog-bringing-notepads-best-kept-secret-to-vs-code/</guid>
+      <description>Windows Notepad has had a hidden logging trick since 1992 - type .LOG as the first line of a file and it automatically appends a timestamp every time you open it. I missed it when I moved to VS Code, so I built dotLOG to bring it back.</description>
     </item>
   </channel>
 </rss>

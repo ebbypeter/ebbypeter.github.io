@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jitter on Ebby Builds!</title>
+    <link>http://localhost:1313/tags/jitter/</link>
+    <description>Recent content in Jitter on Ebby Builds!</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 03 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/jitter/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS</title>
+      <link>http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/</guid>
+      <description>Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn&amp;rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.</description>
+    </item>
+  </channel>
+</rss>

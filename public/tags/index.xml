@@ -6,40 +6,250 @@
     <description>Recent content in Tags on Ebby Builds!</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 22 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 03 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apim</title>
+      <link>http://localhost:1313/tags/apim/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/apim/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>App-Gateway</title>
+      <link>http://localhost:1313/tags/app-gateway/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/app-gateway/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure</title>
+      <link>http://localhost:1313/tags/azure/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure-Front-Door</title>
+      <link>http://localhost:1313/tags/azure-front-door/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure-front-door/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure-Sql</title>
+      <link>http://localhost:1313/tags/azure-sql/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure-sql/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Backoff</title>
+      <link>http://localhost:1313/tags/backoff/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/backoff/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Circuit-Breaker</title>
+      <link>http://localhost:1313/tags/circuit-breaker/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/circuit-breaker/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Distributed-Systems</title>
+      <link>http://localhost:1313/tags/distributed-systems/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/distributed-systems/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Event-Hubs</title>
+      <link>http://localhost:1313/tags/event-hubs/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/event-hubs/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Jitter</title>
+      <link>http://localhost:1313/tags/jitter/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/jitter/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Resilience</title>
+      <link>http://localhost:1313/tags/resilience/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/resilience/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Retry-Logic</title>
+      <link>http://localhost:1313/tags/retry-logic/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/retry-logic/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sre</title>
+      <link>http://localhost:1313/tags/sre/</link>
+      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/sre/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure-Diagnostics</title>
+      <link>http://localhost:1313/tags/azure-diagnostics/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure-diagnostics/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure-Monitor</title>
+      <link>http://localhost:1313/tags/azure-monitor/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure-monitor/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Azure-Policy</title>
+      <link>http://localhost:1313/tags/azure-policy/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure-policy/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Cost-Optimization</title>
+      <link>http://localhost:1313/tags/cost-optimization/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/cost-optimization/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Dcr</title>
+      <link>http://localhost:1313/tags/dcr/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/dcr/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Finops</title>
+      <link>http://localhost:1313/tags/finops/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/finops/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kql</title>
+      <link>http://localhost:1313/tags/kql/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/kql/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Log-Analytics</title>
+      <link>http://localhost:1313/tags/log-analytics/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/log-analytics/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Observability</title>
+      <link>http://localhost:1313/tags/observability/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/observability/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Resource-Specific-Logs</title>
+      <link>http://localhost:1313/tags/resource-specific-logs/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/resource-specific-logs/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Aks</title>
+      <link>http://localhost:1313/tags/aks/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/aks/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>App-Service</title>
+      <link>http://localhost:1313/tags/app-service/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/app-service/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Autoscaling</title>
+      <link>http://localhost:1313/tags/autoscaling/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/autoscaling/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Keda</title>
+      <link>http://localhost:1313/tags/keda/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/keda/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Load-Shedding</title>
+      <link>http://localhost:1313/tags/load-shedding/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/load-shedding/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Vmss</title>
+      <link>http://localhost:1313/tags/vmss/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/vmss/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Well-Architected-Framework</title>
+      <link>http://localhost:1313/tags/well-architected-framework/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/well-architected-framework/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Extension</title>
       <link>http://localhost:1313/tags/extension/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/extension/</guid>
       <description></description>
     </item>
     <item>
       <title>Open-Source</title>
       <link>http://localhost:1313/tags/open-source/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/open-source/</guid>
       <description></description>
     </item>
     <item>
       <title>Productivity</title>
       <link>http://localhost:1313/tags/productivity/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/productivity/</guid>
       <description></description>
     </item>
     <item>
       <title>Tools</title>
       <link>http://localhost:1313/tags/tools/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/tools/</guid>
       <description></description>
     </item>
     <item>
       <title>Vscode</title>
       <link>http://localhost:1313/tags/vscode/</link>
-      <pubDate>Sun, 22 Feb 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/vscode/</guid>
       <description></description>
     </item>

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Hidden Cost of 'Just Turn On Logging' in Azure",
+  
+  "datePublished": "2026-01-27T00:00:00Z",
+  "dateModified": "2026-01-27T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Ebby Peter",
+    
+    "image": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "http:\/\/localhost:1313\/2026\/01\/the-hidden-cost-of-just-turn-on-logging-in-azure\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ebby Builds!",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    }
+    
+  },
+  "description": "Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.156.0 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Ebby Peter">
+<meta name="keywords" content="">
+<meta name="description" content="Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.">
+
+
+<meta property="og:description" content="Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure">
+<meta name="twitter:title" content="The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure">
+<meta property="og:url" content="http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/">
+<meta property="twitter:url" content="http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/">
+<meta property="og:site_name" content="Ebby Builds!">
+<meta property="og:description" content="Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.">
+<meta name="twitter:description" content="Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2026-01-27T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2026-01-27T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="Azure">
+    
+      <meta property="article:section" content="Cloud Engineering">
+    
+      <meta property="article:section" content="FinOps">
+    
+  
+  
+    
+      <meta property="article:tag" content="azure-monitor">
+    
+      <meta property="article:tag" content="log-analytics">
+    
+      <meta property="article:tag" content="azure-diagnostics">
+    
+      <meta property="article:tag" content="cost-optimization">
+    
+      <meta property="article:tag" content="dcr">
+    
+      <meta property="article:tag" content="observability">
+    
+      <meta property="article:tag" content="finops">
+    
+      <meta property="article:tag" content="kql">
+    
+      <meta property="article:tag" content="resource-specific-logs">
+    
+      <meta property="article:tag" content="azure-policy">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@ebbypeter">
+
+
+  <meta name="twitter:creator" content="@ebbypeter">
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+
+
+
+
+
+
+    <title>The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure</title>
+
+    <link rel="icon" href="http://localhost:1313/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://localhost:1313/" aria-label="Go to homepage">Ebby Builds!</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://localhost:1313/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://localhost:1313/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ebby Peter</h4>
+        
+          <h5 class="sidebar-profile-bio">Blueprint. Build. Ship. Repeat!</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/ebbypeter/" target="_blank" rel="noopener" title="LinkedIn">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-linkedin" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">LinkedIn</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="Resume">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-briefcase" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Resume</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2026-01-27T00:00:00Z">
+        
+  January 27, 2026
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://localhost:1313/categories/azure">Azure</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/cloud-engineering">Cloud Engineering</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/finops">FinOps</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p><em>Why your Log Analytics bill is lying to you, and how to fix it before it compounds.</em></p>
+<hr>
+<p>Nobody budgets for observability until the bill arrives.</p>
+<p>Here&rsquo;s a scenario that plays out more often than anyone admits. A platform team, doing the right thing, rolls out an Azure Policy with a <code>DeployIfNotExists</code> rule: if a resource doesn&rsquo;t have a Diagnostic Setting, create one. Automatic. At scale. All categories. Destination: Log Analytics workspace.</p>
+<p>Three months later, the cloud bill has a Log Analytics line item that&rsquo;s four times what anyone expected. Someone runs a cost analysis, traces it back to the policy, and realizes that hundreds of resources have been silently streaming every log category, SQL query statistics, AKS control plane chatter, firewall network flows, into a single workspace, billed at full price, forever.</p>
+<p>The instinct is to blame logging. The real problem is the assumption behind it: that logging is a safe default, a simple toggle, something you turn on and forget.</p>
+<p>It isn&rsquo;t. And the gap between that assumption and reality is where Azure bills quietly grow.</p>
+<hr>
+<h2 id="section-1-first-correct-the-mental-model">Section 1: First, Correct the Mental Model</h2>
+<h3 id="logging-isnt-on-by-default-so-wheres-the-money-going">Logging isn&rsquo;t on by default. So where&rsquo;s the money going?</h3>
+<p>Here&rsquo;s something that surprises a lot of teams: Azure resource logs are <strong>not collected by default on any resource</strong>. Not Key Vault. Not Azure SQL. Not AKS. Not Azure Firewall. Every single resource requires an explicit Diagnostic Setting that specifies what to collect and where to send it.</p>
+<p>So if logging is off by default, how does the bill get out of control? The answer almost always involves scale. A Diagnostic Setting on one resource is a manageable decision. A Diagnostic Setting on every resource, applied automatically, with all categories enabled, with no volume estimation, is a different thing entirely.</p>
+<p>A Diagnostic Setting is essentially a declaration with three parts: which resource, which log categories, and which destination. The destination options are a Log Analytics workspace, a Storage Account, an Event Hub, or a combination. Each has its own cost profile. When teams route everything to a Log Analytics workspace on the Analytics pricing plan without thinking about it, they&rsquo;re making the most expensive possible choice by default.</p>
+<p>The subtler trap is in the categories. When you create a Diagnostic Setting, you&rsquo;re presented with a list of log categories for that resource type and asked to tick the ones you want. The temptation, especially in a policy that runs automatically, is to tick all of them. But log categories are not equal in volume or value.</p>
+<p>Consider Azure SQL Database. Its diagnostic categories include <code>SQLInsights</code>, <code>AutomaticTuning</code>, <code>Errors</code>, <code>DatabaseWaitStatistics</code>, <code>Timeouts</code>, <code>Blocks</code>, <code>Deadlocks</code>, <code>QueryStoreRuntimeStatistics</code>, <code>QueryStoreWaitStatistics</code>, and more. A team troubleshooting slow queries probably needs <code>QueryStoreRuntimeStatistics</code> and <code>Errors</code>. They almost certainly don&rsquo;t need <code>AutomaticTuning</code> generating records every time the database engine adjusts an index recommendation.</p>
+<blockquote>
+<p><strong>Diagnostic settings are a category selector, not a filter. You choose what type of log to collect, you don&rsquo;t choose which individual records within that type. That distinction costs teams thousands of dollars a month.</strong></p>
+</blockquote>
+<p>This is the foundational misunderstanding. And it shapes every problem that follows.</p>
+<hr>
+<h2 id="section-2-the-azurediagnostics-table-is-the-worst-kind-of-monolith">Section 2: The <code>AzureDiagnostics</code> Table Is the Worst Kind of Monolith</h2>
+<h3 id="a-single-table-absorbing-logs-from-every-azure-service-youve-ever-touched-what-could-go-wrong">A single table absorbing logs from every Azure service you&rsquo;ve ever touched. What could go wrong?</h3>
+<p>When you create a Diagnostic Setting and point it at a Log Analytics workspace, you have a choice (where supported) about how the data gets stored. The legacy option sends everything into a table called <code>AzureDiagnostics</code>. Understanding what that table actually is, and what it does to your logging strategy, is one of the most valuable things you can do before scaling out your observability coverage.</p>
+<h3 id="what-azurediagnostics-actually-is">What <code>AzureDiagnostics</code> actually is</h3>
+<p><code>AzureDiagnostics</code> is a single, flat Log Analytics table that acts as a catch-all for resource logs from every Azure service using legacy &ldquo;Azure Diagnostics mode.&rdquo; Key Vault audit events, SQL Server query statistics, Application Gateway access logs, Azure Firewall network rules, AKS control plane events, they all land in the same table, merged into a shared schema.</p>
+<p>Nobody designed this schema for any particular use case. It emerged over time as each Azure service team added their own columns to what was supposed to be a common structure. The result is a massive, heterogeneous, column-bloated table that nobody designed holistically and everyone is forced to query.</p>
+<h3 id="the-500-column-ceiling">The 500-column ceiling</h3>
+<p>Log Analytics workspaces impose a hard limit of 500 columns per table. <code>AzureDiagnostics</code> is, by far, the most likely table in any workspace to hit that ceiling, because it absorbs schemas from dozens of different services, each with its own set of fields.</p>
+<p>Every workspace starts with at least 200 pre-defined columns in <code>AzureDiagnostics</code>. Workspaces created before January 19, 2021 may have additional legacy columns already occupying that budget. As more resource types pipe data into the table, new columns are added, until the 500-column limit is reached.</p>
+<p>When it is, something unfortunate happens: any data that would have gone into a new column gets redirected into a dynamic property bag called <code>AdditionalFields</code>. Structured logs become unstructured again. Fields that should be queryable as typed columns become strings buried inside a dynamic object that requires manual parsing to use.</p>
+<p>The logs are still there. They&rsquo;re just harder to access than if you&rsquo;d never tried to structure them in the first place.</p>
+<h3 id="query-performance-degrades-at-scale">Query performance degrades at scale</h3>
+<p>Because <code>AzureDiagnostics</code> contains data from every resource type in your workspace, any query that doesn&rsquo;t explicitly restrict its scope will scan the entire table. In a large environment, that means scanning SQL Server records to find Key Vault events, or scanning firewall logs to find App Gateway errors.</p>
+<p>Microsoft&rsquo;s own guidance is unambiguous: always filter by <code>ResourceType</code> and <code>TimeGenerated</code> at the very top of any <code>AzureDiagnostics</code> query, before any other logic. The difference between the right and wrong approach looks like this:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">// ❌ The wrong way, scans the entire table
+AzureDiagnostics
+| where Category == &#34;AuditEvent&#34;
+
+// ✅ The right way, scopes first, then filters
+AzureDiagnostics
+| where ResourceType == &#34;KEYVAULTS&#34;
+| where TimeGenerated &gt; ago(1d)
+| where Category == &#34;AuditEvent&#34;
+</code></pre><p>The first query will be slow and expensive in any environment where <code>AzureDiagnostics</code> is large. The second is fast. The difference is just two lines added at the top, but most queries written against <code>AzureDiagnostics</code> don&rsquo;t include them, because the table&rsquo;s structure doesn&rsquo;t make the need obvious until performance becomes a problem.</p>
+<h3 id="rbac-is-all-or-nothing">RBAC is all-or-nothing</h3>
+<p>The entire <code>AzureDiagnostics</code> table is a single security boundary. There is no mechanism for granting a security team read access to Azure Firewall logs without also giving them access to SQL Server audit trails, Key Vault access records, and anything else that flows into the same table.</p>
+<p>This isn&rsquo;t just an ergonomics problem, it&rsquo;s a compliance and data governance problem. In environments where different teams should have visibility into different resource types, <code>AzureDiagnostics</code> makes that separation structurally impossible. You either give someone everything in the table or nothing.</p>
+<h3 id="the-pricing-tier-trap-the-thing-nobody-talks-about">The pricing tier trap, the thing nobody talks about</h3>
+<p>This is the issue most overlooked in conversations about <code>AzureDiagnostics</code>, and it has the most direct impact on cost.</p>
+<p>Log Analytics tables can be assigned to one of three pricing plans: Analytics, Basic, or Auxiliary. Analytics is the most expensive; Basic and Auxiliary are significantly cheaper (more on the actual numbers in the next section). For many log types, high-volume, low-priority data that you might query once in a forensics investigation but never use for alerting, Basic or Auxiliary is the right plan.</p>
+<p><code>AzureDiagnostics</code> cannot be placed on the Basic or Auxiliary plans.</p>
+<p>Because <code>AzureDiagnostics</code> is a shared table that receives data from multiple sources across multiple resource types, it doesn&rsquo;t qualify for the cheaper table plans that require a dedicated, single-purpose table. Everything that flows into <code>AzureDiagnostics</code> is billed at full Analytics rates, regardless of whether the data is worth that price.</p>
+<p>That Azure Firewall network flow log you&rsquo;d happily pay $0.15/GB to store? Once it&rsquo;s in <code>AzureDiagnostics</code>, it costs $2.30–$4.30/GB. The table itself is a billing ceiling.</p>
+<hr>
+<h2 id="section-3-the-real-cost-of-azure-monitor-logs-with-actual-numbers">Section 3: The Real Cost of Azure Monitor Logs (With Actual Numbers)</h2>
+<h3 id="three-pricing-tiers-most-teams-use-the-expensive-one-for-everything">Three pricing tiers. Most teams use the expensive one for everything.</h3>
+<p>Azure Monitor Logs has a three-tier pricing model for Log Analytics tables. Most teams know about pay-as-you-go rates for the Analytics plan and assume that&rsquo;s the only option. It isn&rsquo;t. The gap between tiers is significant enough to materially change the economics of any observability strategy.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Plan</th>
+          <th>Designed For</th>
+          <th>Approx. Ingestion Cost (East US)</th>
+          <th>Query Cost</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Active monitoring, alerting, real-time dashboards</td>
+          <td>~$2.30–$4.30/GB (PAYG)</td>
+          <td>Free</td>
+      </tr>
+      <tr>
+          <td><strong>Basic</strong></td>
+          <td>Debugging, occasional forensics, compliance search</td>
+          <td>~$0.50/GB</td>
+          <td>Charged per GB scanned</td>
+      </tr>
+      <tr>
+          <td><strong>Auxiliary</strong></td>
+          <td>High-volume, low-priority data (firewall flows, proxy logs, audit archives)</td>
+          <td>~$0.15/GB</td>
+          <td>Charged per GB scanned</td>
+      </tr>
+  </tbody>
+</table>
+<p>Auxiliary Logs became generally available in April 2025. Many teams working with older architectures haven&rsquo;t adopted it yet, which means they&rsquo;re paying Analytics rates for data that rarely gets queried and doesn&rsquo;t drive any alerts.</p>
+<p>The right framing is this: <strong>the pricing tier should match the access pattern</strong>, not the resource type. A firewall log doesn&rsquo;t automatically belong on the Analytics plan. It belongs there only if you&rsquo;re actively building alerts or dashboards on top of it. If it exists for forensics or compliance purposes and you query it a few times a year, it belongs on Auxiliary, at less than 7% of the Analytics cost.</p>
+<p>Commitment tiers, starting at 100 GB per day, can cut Analytics ingestion costs by up to 30% compared to pay-as-you-go rates. That&rsquo;s a meaningful discount. But it&rsquo;s optimizing the wrong layer if the data shouldn&rsquo;t be on the Analytics plan in the first place. A 30% discount on a price you shouldn&rsquo;t be paying is still a cost that shouldn&rsquo;t exist.</p>
+<h3 id="the-free-tables-most-teams-dont-know-about">The free tables most teams don&rsquo;t know about</h3>
+<p>Several tables in Log Analytics are completely free to ingest and retain. These include:</p>
+<ul>
+<li><code>AzureActivity</code>, the subscription-level audit log, recording every create/update/delete operation across your subscription</li>
+<li><code>Heartbeat</code>, agent heartbeats from VMs and servers</li>
+<li><code>Usage</code>, workspace data ingestion metrics</li>
+<li><code>Operation</code>, workspace operational logs</li>
+</ul>
+<p>Teams occasionally route these through Diagnostic Settings or other pipelines in ways that generate a charge. They shouldn&rsquo;t. These tables exist specifically to be free, paying to ingest them is a configuration mistake worth checking for.</p>
+<h3 id="what-actually-costs-money">What actually costs money</h3>
+<p>Log volume varies enormously by resource type. Before enabling Diagnostic Settings at scale, it&rsquo;s worth estimating what you&rsquo;re about to commit to. A rough formula, <code>entries per month × average entry size × ingestion rate per GB</code>, gives a useful approximation.</p>
+<p>A Key Vault audit event is roughly 912 bytes on average. A single vault with 2,500 requests per month generates about 2.3 MB of logs, effectively free. Scale that to 100 high-traffic vaults and the volume becomes more meaningful, but it&rsquo;s still manageable.</p>
+<p>Azure Firewall is a different story. Network rule logs record every allowed and denied connection through the firewall. In a busy environment, that&rsquo;s every DNS lookup, every health probe, every outbound HTTP request from every resource behind the firewall. A single active Azure Firewall can generate tens of gigabytes of network rule logs per day. Enabling <code>AzureFirewallNetworkRule</code> without thinking about it is the fastest way to generate a Log Analytics bill that surprises everyone.</p>
+<p>AKS control plane logs have a similar profile. The <code>AKSAudit</code> and <code>AKSControlPlane</code> categories capture Kubernetes API server activity, which includes constant background activity from system processes calling <code>ListPods</code>, <code>GetConfigMap</code>, and similar read-only operations. These events have essentially zero operational value for most teams but generate significant log volume at a busy cluster.</p>
+<p>SQL Server audit logs record every query execution, which means the volume scales directly with database load. At anything approaching production scale, this category warrants careful consideration of whether it belongs on Analytics or a cheaper plan.</p>
+<p>To see where your current costs are actually coming from, this query runs against your existing workspace and produces a breakdown by resource type and category:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">AzureDiagnostics
+| where _IsBillable == true
+| where TimeGenerated &gt; now(-31d)
+| summarize BillableDataGB = round(sum(_BilledSize)/(1024*1024*1024), 2)
+    by ResourceProvider, ResourceType, Category
+| sort by BillableDataGB desc
+</code></pre><p>Run this before expanding your diagnostic coverage. It will tell you exactly which categories are responsible for the majority of your current spend and give you a data-driven basis for deciding what to keep, what to move to a cheaper tier, and what to stop collecting.</p>
+<h3 id="the-daily-cap-circuit-breaker-not-quota">The daily cap: circuit breaker, not quota</h3>
+<p>Log Analytics workspaces let you configure a daily ingestion cap, a hard limit on how much data the workspace will accept in a 24-hour period. This sounds like a cost control mechanism. It is, but it comes with a critical caveat: when the cap is hit, <strong>all ingestion stops</strong>, not just the noisy source that triggered it.</p>
+<p>That means if an Azure Firewall starts generating unexpected log volume and hits the cap, you also stop receiving Key Vault audit events, AKS alerts, and everything else in the workspace. Potentially at 2am, silently.</p>
+<p>The daily cap is useful as a safety net during initial rollout, to prevent a misconfigured diagnostic setting from generating an unlimited bill. It is not a substitute for designing your logging strategy correctly. If you find yourself relying on the cap as a permanent cost control, that&rsquo;s a sign the underlying configuration needs fixing.</p>
+<hr>
+<h2 id="section-4-resource-specific-tables-the-migration-you-should-already-be-doing">Section 4: Resource-Specific Tables, The Migration You Should Already Be Doing</h2>
+<h3 id="microsoft-is-deprecating-azurediagnostics-for-most-services-heres-how-to-get-ahead-of-it">Microsoft is deprecating <code>AzureDiagnostics</code> for most services. Here&rsquo;s how to get ahead of it.</h3>
+<p>Microsoft has been moving Azure services away from <code>AzureDiagnostics</code> for several years and has stated that all services will eventually use resource-specific mode. Some services already only support resource-specific tables. Others let you choose. A few still only write to <code>AzureDiagnostics</code>. The list of services still using the legacy mode is shrinking.</p>
+<p>Resource-specific mode is not a future option or a preview feature. It&rsquo;s the current recommendation and the direction the platform is moving. For any new Diagnostic Setting you create today, there&rsquo;s no good reason not to use resource-specific mode when the option is available.</p>
+<h3 id="what-resource-specific-mode-actually-does">What resource-specific mode actually does</h3>
+<p>Instead of routing all log categories from all resource types into a single <code>AzureDiagnostics</code> table, resource-specific mode creates individual tables for each log category. Each table is narrow, purpose-built, and contains only the columns relevant to that log type.</p>
+<p>The naming convention follows the resource type and category. Azure Firewall gets <code>AZFWApplicationRule</code>, <code>AZFWNetworkRule</code>, and <code>AZFWDnsQuery</code>, separate tables, each with a schema designed specifically for that log type. AKS gets <code>AKSAudit</code>, <code>AKSAuditAdmin</code>, and <code>AKSControlPlane</code>. Key Vault gets <code>KeyVaultAuditEvent</code>. Each table has documented columns, typed fields, and no risk of hitting a shared column ceiling.</p>
+<p>The practical benefits over <code>AzureDiagnostics</code> are significant across every dimension:</p>
+<p>Queries are faster and simpler because the table only contains data for one resource type. Schemas are discoverable and consistent, IntelliSense works properly, column types are what you expect. RBAC can be applied at the table level, so a security team can read <code>AZFWNetworkRule</code> without seeing <code>KeyVaultAuditEvent</code>. And crucially, each table can be assigned to the Analytics, Basic, or Auxiliary pricing plan independently.</p>
+<p>That last point is what makes resource-specific tables the prerequisite for any meaningful cost optimization. You cannot assign <code>AzureDiagnostics</code> to a cheaper tier. You can assign <code>AZFWNetworkRule</code> to Auxiliary, <code>AKSAudit</code> to Basic, and <code>KeyVaultAuditEvent</code> to Analytics, applying the right price to the right data access pattern for each one.</p>
+<h3 id="how-to-migrate-without-losing-historical-data">How to migrate without losing historical data</h3>
+<p>The migration path is straightforward but requires a brief parallel-running period. Historical data already in <code>AzureDiagnostics</code> stays there, it doesn&rsquo;t move to the new tables automatically. It will age out according to your workspace retention settings. New data, once you update the Diagnostic Setting to resource-specific mode, flows into the dedicated table immediately.</p>
+<p>During the transition, queries need to cover both sources. The <code>union</code> operator handles this cleanly:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">// Query during migration, covers both old (AzureDiagnostics) and new (KeyVaultAuditEvent) data
+union AzureDiagnostics, KeyVaultAuditEvent
+| where (ResourceType == &#34;KEYVAULTS&#34; or Type == &#34;KeyVaultAuditEvent&#34;)
+| where TimeGenerated &gt; ago(90d)
+| where OperationName == &#34;SecretGet&#34;
+</code></pre><p>Once your retention period has passed and historical data has aged out of <code>AzureDiagnostics</code>, you can simplify queries to target only the resource-specific table. The union is a temporary scaffold, not a permanent state.</p>
+<h3 id="the-rbac-and-pricing-unlocks-that-come-with-migration">The RBAC and pricing unlocks that come with migration</h3>
+<p>After migrating to resource-specific tables, you have three new levers that weren&rsquo;t available before.</p>
+<p>The first is per-table pricing plan assignment. Move high-volume, rarely-queried tables to Basic or Auxiliary. Keep tables that drive alerts and dashboards on Analytics. This single change can substantially reduce ingestion costs for environments heavy on firewall or AKS logs.</p>
+<p>The second is table-level RBAC. Assign read permissions on <code>AZFWNetworkRule</code> to the network security team, <code>AzureSQLDatabaseInsights</code> to the DBA team, and <code>KeyVaultAuditEvent</code> to the compliance team, all without cross-pollinating access. This is not achievable with <code>AzureDiagnostics</code>.</p>
+<p>The third is per-table retention configuration. Compliance logs might need to be retained for 730 days. Debug logs might be useless after 30 days. With resource-specific tables, you can configure these independently rather than applying a single workspace-wide retention setting to everything.</p>
+<hr>
+<h2 id="section-5-dcr-transformations-logging-like-an-api-not-a-dump">Section 5: DCR Transformations, Logging Like an API, Not a Dump</h2>
+<h3 id="filter-before-you-store-shape-what-you-ingest-design-your-telemetry-like-youd-design-an-interface">Filter before you store. Shape what you ingest. Design your telemetry like you&rsquo;d design an interface.</h3>
+<p>Even with resource-specific tables and the right pricing plan, there&rsquo;s a layer of refinement that most teams leave on the table: filtering <em>within</em> a log category before the data is stored. Diagnostic Settings let you choose which categories to enable, but they don&rsquo;t let you filter individual records within a category. What you enable, you ingest in full.</p>
+<p>Data Collection Rules with ingestion-time transformations close that gap.</p>
+<h3 id="what-transformations-are-and-how-they-fit-in">What transformations are and how they fit in</h3>
+<p>A Data Collection Rule (DCR) is a configuration object that defines how data flows through the Azure Monitor ingestion pipeline. One of its capabilities is running a KQL transformation on incoming data after Azure receives it but before it&rsquo;s written to the Log Analytics table.</p>
+<p>Think of it as middleware for your log pipeline. The transformation is a KQL query written against a virtual table called <code>source</code>, which represents the incoming data stream. You can filter rows, drop columns, rename fields, redact sensitive values, or discard records entirely. The result of the query is what gets stored.</p>
+<p>This is what makes it possible to store only denied Azure Firewall traffic, or only error-level AKS events, or Key Vault operations that involve specific secret names, without any of the discarded data ever touching your storage.</p>
+<h3 id="the-workspace-transformation-dcr-the-bridge-for-diagnostic-settings">The workspace transformation DCR: the bridge for Diagnostic Settings</h3>
+<p>There&rsquo;s a subtlety here worth understanding. Diagnostic Settings don&rsquo;t use DCRs natively, they write directly to the Log Analytics workspace. To apply transformations to data arriving from Diagnostic Settings, you need a specific type of DCR called a workspace transformation DCR.</p>
+<p>A workspace transformation DCR is attached to the workspace itself rather than to a specific data source. It intercepts data before it&rsquo;s written to supported tables and applies the transformation you&rsquo;ve defined. Each workspace can have only one workspace transformation DCR, but that single DCR can contain transformations for any number of tables.</p>
+<p>The practical implication is that you can apply ingestion-time filtering to all of your Diagnostic Settings-sourced data through a single configuration object, without modifying the Diagnostic Settings themselves.</p>
+<h3 id="real-transformation-examples">Real transformation examples</h3>
+<p><strong>Drop noisy AKS control plane events.</strong> The <code>AKSAudit</code> table captures every Kubernetes API call, including constant read-only operations from system components. Most teams only care about write operations, creates, updates, deletes, and escalations. The read chatter can be safely discarded:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| where Verb !in (&#34;list&#34;, &#34;get&#34;, &#34;watch&#34;)
+</code></pre><p>Applied to a busy AKS cluster, this single filter can reduce <code>AKSAudit</code> ingestion volume by 60–80% while retaining everything operationally significant.</p>
+<p><strong>Azure Firewall, ingest only denied traffic.</strong> If your primary use case for firewall logs is security monitoring and incident response, allowed traffic is usually noise. Storing only denied connections dramatically reduces volume while preserving the records most likely to matter:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| where Action == &#34;Deny&#34;
+| project TimeGenerated, SourceIp, DestinationIp,
+          DestinationPort, Protocol, Action, RuleCollection
+</code></pre><p>The <code>project</code> clause here serves a dual purpose: it drops the <code>Action == &quot;Allow&quot;</code> rows and also removes columns not needed for the security use case, reducing the stored record size.</p>
+<p><strong>Redact sensitive fields before storage.</strong> If your application logs contain tokens, session identifiers, or other sensitive values in URL parameters, transformations can sanitize them before they reach storage:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| extend RequestUri = replace_regex(RequestUri, @&#34;token=[^&amp;]+&#34;, &#34;token=REDACTED&#34;)
+| project-away SensitiveHeader
+</code></pre><p>This gives you observability without creating a secondary data store full of credentials.</p>
+<h3 id="-the-50-filtering-charge-the-gotcha-nobody-tells-you">⚠️ The 50% filtering charge: the gotcha nobody tells you</h3>
+<p>This is the most commonly missed nuance around DCR transformations, and it has direct cost implications for anyone using aggressive filtering.</p>
+<p>If a transformation drops more than 50% of the incoming data stream, Azure charges a data processing fee for the filtered excess above that threshold. The formula is:</p>
+<pre tabindex="0"><code>Processing charge = [GB dropped by transformation] − ([GB incoming] ÷ 2)
+</code></pre><p>To make that concrete: imagine 100 GB of Azure Firewall logs arrive per day. Your transformation keeps only denied traffic, 20 GB. You dropped 80 GB.</p>
+<pre tabindex="0"><code>Processing charge = 80 GB − (100 GB ÷ 2) = 30 GB processing charge
+</code></pre><p>You stored 20 GB and paid for 30 GB of processing. You still come out significantly ahead compared to storing 100 GB at Analytics rates, but the savings are smaller than a naive calculation would suggest.</p>
+<p>The right response to this isn&rsquo;t to avoid transformations. It&rsquo;s to layer your cost-reduction strategy correctly:</p>
+<ol>
+<li><strong>Reduce at the source first.</strong> Choose narrower diagnostic categories in the Diagnostic Setting. Don&rsquo;t enable <code>AzureFirewallNetworkRule</code> if all you need is <code>AzureFirewallApplicationRule</code>.</li>
+<li><strong>Move to the right pricing tier.</strong> Put high-volume tables on Basic or Auxiliary before applying transformations.</li>
+<li><strong>Apply transformations as precision filtering.</strong> Use them to further refine the data that remains, not as the primary mechanism for reducing a flood.</li>
+</ol>
+<p>There is one important exception: if Microsoft Sentinel is enabled on your workspace, transformation processing charges are waived entirely for Analytics tables. If you&rsquo;re running Sentinel, aggressive filtering via DCR transformations has no processing cost penalty.</p>
+<h3 id="transformation-constraints-to-know-before-you-start">Transformation constraints to know before you start</h3>
+<p>Not all Log Analytics tables support ingestion-time transformations, the Azure Monitor table reference documents which ones do. Azure Firewall transformations, specifically, only work with resource-specific logs, if you&rsquo;re still using <code>AzureDiagnostics</code> mode for firewall logs, DCR transformations aren&rsquo;t available to you. This is yet another reason to complete the migration to resource-specific tables before investing in transformation logic.</p>
+<p>Changes to transformation rules take up to 30 minutes to propagate. The portal wizard for creating transformations shows a preview of the transformation applied to sample data before you save, use it. Syntax errors that would silently drop records are caught at this stage, not after the fact.</p>
+<hr>
+<h2 id="section-6-the-layered-strategy-defense-in-depth-for-log-costs">Section 6: The Layered Strategy, Defense in Depth for Log Costs</h2>
+<h3 id="six-levers-applied-in-the-right-order">Six levers, applied in the right order.</h3>
+<p>The tools are available. Resource-specific tables, tiered pricing plans, DCR transformations, table-level RBAC, Azure Monitor has evolved significantly, and teams that use the full toolkit pay a fraction of what teams using only default configurations pay for equivalent coverage.</p>
+<p>The challenge is that the tools need to be applied in the right order. Transformations applied on top of <code>AzureDiagnostics</code> are less powerful than transformations on resource-specific tables. Pricing tier changes without category selection discipline don&rsquo;t capture the full savings. Doing everything at once is confusing. Here&rsquo;s the sequence that works.</p>
+<p><strong>Layer 1, Audit before you expand.</strong> Before enabling new Diagnostic Settings or adding new resources to existing policies, run the billing breakdown query from Section 3. Know where your current ingestion costs are coming from. Establish a baseline. This takes 10 minutes and prevents the most common form of cost surprise.</p>
+<p><strong>Layer 2, Select categories with intent.</strong> For each resource type, identify the specific categories that serve an actual use case: alerting, dashboards, compliance retention, incident forensics. Enable those. Don&rsquo;t tick the rest. If you&rsquo;re not sure what a category contains, it shouldn&rsquo;t be enabled yet.</p>
+<p><strong>Layer 3, Use resource-specific mode for every new Diagnostic Setting.</strong> When creating or updating a Diagnostic Setting, toggle &ldquo;Resource specific&rdquo; wherever the option appears. Run both modes during the migration window using <code>union</code> queries. Once historical data ages out, simplify to the resource-specific table only.</p>
+<p><strong>Layer 4, Assign table plans to match access patterns.</strong> After migrating to resource-specific tables, assign each table to the plan that reflects how you actually use it. Tables backing active dashboards and alert rules belong on Analytics. Tables used for debugging belong on Basic. High-volume tables used for compliance archival or security hunting belong on Auxiliary.</p>
+<p><strong>Layer 5, Apply DCR transformations for precision filtering.</strong> With the right pricing tier in place, use workspace transformation DCRs to further reduce noise within each table. Drop read-only AKS chatter. Filter allowed firewall traffic. Strip unnecessary columns. Be aware of the 50% threshold and don&rsquo;t use transformations as a substitute for upstream category selection.</p>
+<p><strong>Layer 6, Monitor your monitoring.</strong> Set a daily ingestion cap as a circuit breaker during rollout. Then set up an alert on the <code>Usage</code> table to proactively notify you when any specific table&rsquo;s ingestion exceeds an expected threshold:</p>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">// Ingestion spike detection, run as a scheduled alert
+Usage
+| where TimeGenerated &gt; ago(1d)
+| summarize GB = sum(Quantity) / 1000 by DataType
+| where GB &gt; 10  // adjust per-table thresholds based on your baseline
+| order by GB desc
+</code></pre><p>An alert here catches configuration mistakes, a new policy enabling an unexpected category, a workload behaving differently than anticipated, a third-party solution logging more than expected, before they compound into a billing surprise at month end.</p>
+<hr>
+<h2 id="conclusion-logging-is-architecture-not-a-toggle">Conclusion: Logging Is Architecture, Not a Toggle</h2>
+<p>There&rsquo;s a useful way to think about the problem that unifies everything in this post.</p>
+<p>A well-designed API has a contract. It exposes what callers need, hides what they don&rsquo;t, and is intentionally shaped rather than just exposed. You don&rsquo;t build an API by dumping your entire database schema as a JSON endpoint and hoping the caller knows what to ignore.</p>
+<p><code>AzureDiagnostics</code> is the opposite of that. It&rsquo;s a monolithic endpoint that accepts everything from every service, enforces no schema contract, charges by volume regardless of value, and requires the consumer to know what to ignore before they can use it. It accumulated rather than being designed.</p>
+<p>The shift to resource-specific tables, tiered pricing plans, and DCR transformations represents Azure finally giving teams the tools to treat telemetry as a first-class design concern rather than an afterthought. The table is purpose-built. The schema is intentional. The access pattern determines the price. The ingestion pipeline can filter before it stores.</p>
+<p>These tools don&rsquo;t reduce observability, they improve it. Noise is not the same as signal. A table that contains only denied firewall traffic is more useful for security monitoring than one that contains every connection the firewall ever processed. A well-transformed <code>AKSAudit</code> table that captures write operations and discards read-only chatter is easier to alert on, faster to query, and cheaper to retain.</p>
+<p>The teams that will be ahead on observability costs over the next few years aren&rsquo;t the ones who log less. They&rsquo;re the ones who log intentionally, who treat their telemetry pipeline with the same design discipline they&rsquo;d bring to any other part of their system.</p>
+<p>The question was never whether to turn on logging. It&rsquo;s whether you&rsquo;ve designed what happens after you do.</p>
+<hr>
+<h2 id="appendix-kql-reference">Appendix: KQL Reference</h2>
+<h3 id="query-1-audit-your-current-ingestion-costs-by-source">Query 1, Audit your current ingestion costs by source</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">AzureDiagnostics
+| where _IsBillable == true
+| where TimeGenerated &gt; now(-31d)
+| summarize BillableDataGB = round(sum(_BilledSize)/(1024*1024*1024), 2)
+    by ResourceProvider, ResourceType, Category
+| sort by BillableDataGB desc
+</code></pre><h3 id="query-2-estimate-log-entry-sizes-for-cost-forecasting">Query 2, Estimate log entry sizes for cost forecasting</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">AzureDiagnostics
+| where Category == &#34;AuditEvent&#34;
+| where TimeGenerated &gt; ago(30d)
+| summarize percentile(_BilledSize, 95), round(avg(_BilledSize))
+</code></pre><h3 id="query-3-ingestion-spike-alert">Query 3, Ingestion spike alert</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">Usage
+| where TimeGenerated &gt; ago(1d)
+| summarize GB = sum(Quantity) / 1000 by DataType
+| where GB &gt; 10
+| order by GB desc
+</code></pre><h3 id="query-4-azurediagnostics-migration-query-covers-both-old-and-new-tables">Query 4, AzureDiagnostics migration query (covers both old and new tables)</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">union AzureDiagnostics, KeyVaultAuditEvent
+| where (ResourceType == &#34;KEYVAULTS&#34; or Type == &#34;KeyVaultAuditEvent&#34;)
+| where TimeGenerated &gt; ago(90d)
+| where OperationName == &#34;SecretGet&#34;
+</code></pre><h3 id="transformation-1-drop-noisy-aks-read-operations">Transformation 1, Drop noisy AKS read operations</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| where Verb !in (&#34;list&#34;, &#34;get&#34;, &#34;watch&#34;)
+</code></pre><h3 id="transformation-2-azure-firewall-denied-traffic-only">Transformation 2, Azure Firewall: denied traffic only</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| where Action == &#34;Deny&#34;
+| project TimeGenerated, SourceIp, DestinationIp,
+          DestinationPort, Protocol, Action, RuleCollection
+</code></pre><h3 id="transformation-3-redact-sensitive-url-parameters">Transformation 3, Redact sensitive URL parameters</h3>
+<pre tabindex="0"><code class="language-kql" data-lang="kql">source
+| extend RequestUri = replace_regex(RequestUri, @&#34;token=[^&amp;]+&#34;, &#34;token=REDACTED&#34;)
+| project-away SensitiveHeader
+</code></pre><hr>
+<p><em>Pricing figures are approximate for the East US region and reflect rates current as of early 2026. Always verify against the Azure pricing calculator for your specific region and usage patterns.</em></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure-monitor/">azure-monitor</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/log-analytics/">log-analytics</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure-diagnostics/">azure-diagnostics</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/cost-optimization/">cost-optimization</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/dcr/">dcr</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/observability/">observability</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/finops/">finops</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/kql/">kql</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/resource-specific-logs/">resource-specific-logs</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure-policy/">azure-policy</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" data-tooltip="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS" aria-label="NEXT: The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/" data-tooltip="Autoscaling Is Not a Recovery Strategy" aria-label="PREVIOUS: Autoscaling Is Not a Recovery Strategy">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2026 Ebby Peter. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" data-tooltip="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS" aria-label="NEXT: The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/" data-tooltip="Autoscaling Is Not a Recovery Strategy" aria-label="PREVIOUS: Autoscaling Is Not a Recovery Strategy">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fthe-hidden-cost-of-just-turn-on-logging-in-azure%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fthe-hidden-cost-of-just-turn-on-logging-in-azure%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fthe-hidden-cost-of-just-turn-on-logging-in-azure%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fthe-hidden-cost-of-just-turn-on-logging-in-azure%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F01%2Fthe-hidden-cost-of-just-turn-on-logging-in-azure%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ebby Peter</h4>
+    
+      <div id="about-card-bio">Blueprint. Build. Ship. Repeat!</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Cloud Architect | Cloud Consultant | Cloud Enthusiast
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        Wellington, New Zealand
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('http://localhost:1313/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="http://localhost:1313/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aks on Ebby Builds!</title>
+    <link>http://localhost:1313/tags/aks/</link>
+    <description>Recent content in Aks on Ebby Builds!</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/aks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Autoscaling Is Not a Recovery Strategy</title>
+      <link>http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/01/autoscaling-is-not-a-recovery-strategy/</guid>
+      <description>Autoscaling is not a recovery strategy. It&amp;rsquo;s an elasticity tool, and knowing the difference is what separates teams that survive incidents from teams that just watch their instance count go up while users experience the outage anyway.</description>
+    </item>
+  </channel>
+</rss>

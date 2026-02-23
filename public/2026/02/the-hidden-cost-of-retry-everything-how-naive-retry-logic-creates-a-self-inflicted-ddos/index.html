@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Hidden Cost of 'Retry Everything': How Naive Retry Logic Creates a Self-Inflicted DDoS",
+  
+  "datePublished": "2026-02-03T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Ebby Peter",
+    
+    "image": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "http:\/\/localhost:1313\/2026\/02\/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ebby Builds!",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    }
+    
+  },
+  "description": "Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn\u0026rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.156.0 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Ebby Peter">
+<meta name="keywords" content="">
+<meta name="description" content="Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn&rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.">
+
+
+<meta property="og:description" content="Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn&rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+<meta name="twitter:title" content="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+<meta property="og:url" content="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/">
+<meta property="twitter:url" content="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/">
+<meta property="og:site_name" content="Ebby Builds!">
+<meta property="og:description" content="Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn&rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.">
+<meta name="twitter:description" content="Retries are load, not safety. Without exponential backoff and jitter, your retry logic doesn&rsquo;t protect against outages, it causes them. This post covers the mechanics of retry storms, five anti-patterns found in real production code, and what correct retry design actually looks like across layered Azure architectures.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2026-02-03T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2026-02-03T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="Azure">
+    
+      <meta property="article:section" content="Architecture">
+    
+      <meta property="article:section" content="Site Reliability Engineering">
+    
+  
+  
+    
+      <meta property="article:tag" content="distributed-systems">
+    
+      <meta property="article:tag" content="resilience">
+    
+      <meta property="article:tag" content="retry-logic">
+    
+      <meta property="article:tag" content="azure">
+    
+      <meta property="article:tag" content="backoff">
+    
+      <meta property="article:tag" content="jitter">
+    
+      <meta property="article:tag" content="circuit-breaker">
+    
+      <meta property="article:tag" content="azure-sql">
+    
+      <meta property="article:tag" content="event-hubs">
+    
+      <meta property="article:tag" content="apim">
+    
+      <meta property="article:tag" content="app-gateway">
+    
+      <meta property="article:tag" content="azure-front-door">
+    
+      <meta property="article:tag" content="sre">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@ebbypeter">
+
+
+  <meta name="twitter:creator" content="@ebbypeter">
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+
+
+
+
+
+
+    <title>The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS</title>
+
+    <link rel="icon" href="http://localhost:1313/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://localhost:1313/" aria-label="Go to homepage">Ebby Builds!</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://localhost:1313/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://localhost:1313/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ebby Peter</h4>
+        
+          <h5 class="sidebar-profile-bio">Blueprint. Build. Ship. Repeat!</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/ebbypeter/" target="_blank" rel="noopener" title="LinkedIn">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-linkedin" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">LinkedIn</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="Resume">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-briefcase" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Resume</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2026-02-03T00:00:00Z">
+        
+  February 3, 2026
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://localhost:1313/categories/azure">Azure</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/architecture">Architecture</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/site-reliability-engineering">Site Reliability Engineering</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>It&rsquo;s 2:17am. Your phone lights up. PagerDuty. The order service is down, latency through the roof, error rates spiking, on-call engineer frantically pulling logs. The root cause will take another twenty minutes to surface: the service isn&rsquo;t being hit by external traffic. It&rsquo;s being hit by itself. Every instance, across every region, firing retries in perfect lockstep every two seconds, generating roughly 40 times the normal request volume against a payment API that&rsquo;s been struggling since a routine failover thirty minutes ago.</p>
+<p>Nobody wrote bad code. Nobody skipped code review. The engineer who wrote the retry loop was doing exactly what they&rsquo;d been taught: handle failures gracefully. Add retries. Be resilient.</p>
+<p>The advice was right. The implementation was incomplete. And that gap, between &ldquo;add retries&rdquo; and &ldquo;add retries correctly&rdquo;, is where production incidents live.</p>
+<p>This post is not an argument against retries. Retries are necessary and correct. It&rsquo;s an argument for understanding what retries actually are: <strong>load</strong>. Every retry you fire is a request to a system that is already struggling. Without both exponential backoff <em>and</em> jitter, your retry mechanism is not a safety net, it is a latent self-destruct, armed and waiting for your first real outage.</p>
+<hr>
+<h2 id="part-1-two-patterns-you-need-to-distinguish">Part 1: Two Patterns You Need to Distinguish</h2>
+<p>The terms &ldquo;thundering herd&rdquo; and &ldquo;retry storm&rdquo; get used interchangeably in war stories and post-mortems. They&rsquo;re related, but they&rsquo;re not the same thing, and understanding the difference helps you target the right fix.</p>
+<h3 id="the-thundering-herd">The Thundering Herd</h3>
+<p>The thundering herd problem has its roots in OS scheduling. When many threads are blocked waiting on a lock or condition variable, and the event fires, the OS historically woke <em>all</em> of them, even though only one could proceed. The rest thrashed, burned CPU, and went back to sleep. Modern kernels like Linux 4.5+ fixed this with the <code>EPOLLEXCLUSIVE</code> flag. Distributed systems haven&rsquo;t been as lucky.</p>
+<p>In a distributed context, a thundering herd happens when many clients simultaneously target the same resource. The synchronization usually comes from a shared event: a cache entry whose TTL expires at the same second for every server in the fleet; a JWT token that all thirty microservices refresh at once; a rolling deployment that brings fifty new instances online simultaneously, each starting with a cold cache and immediately hammering the database to warm it.</p>
+<p>The core problem is a mismatch between how systems are designed and how traffic actually arrives. A database comfortably handling 500 queries per second is not designed to absorb 5,000 queries arriving in the same millisecond. Your capacity is measured in sustained rate. A herd doesn&rsquo;t respect that.</p>
+<h3 id="the-retry-storm">The Retry Storm</h3>
+<p>A retry storm is a thundering herd with a specific cause: retry loops. It unfolds as a positive feedback loop:</p>
+<ol>
+<li>Service experiences degradation, elevated latency, partial errors</li>
+<li>Clients hit their timeout thresholds</li>
+<li>Retry logic fires</li>
+<li>Load on the already-degraded service spikes</li>
+<li>More requests fail and time out</li>
+<li>More retries fire</li>
+<li>Return to step 4</li>
+</ol>
+<p>A 10× overload that triggers retries quickly becomes 20×. The 20× triggers more retries, and the system reaches 40×. At that point, the service is spending all its resources accepting requests that it will fail and time out, instead of completing any. It has entered what researchers call a death spiral, and without external intervention, it cannot exit on its own.</p>
+<p>The sequence isn&rsquo;t hypothetical. Microsoft&rsquo;s Azure Architecture documentation explicitly names this the &ldquo;Retry Storm antipattern&rdquo; and describes it as one of the most common self-inflicted outages in cloud systems.</p>
+<h3 id="cascading-retry-multiplication">Cascading Retry Multiplication</h3>
+<p>There&rsquo;s a third failure mode that gets less attention: what happens when <em>multiple layers</em> of your stack each implement their own independent retry logic.</p>
+<p>Consider a typical modern architecture: a frontend client talks to an API Management gateway, which forwards to a backend service, which queries a database. If each layer has a retry count of 3, a single user action that encounters a database hiccup can result in:</p>
+<ul>
+<li>Client retries 3× → 3 requests hit APIM</li>
+<li>APIM retries each 3× → 9 requests hit the backend</li>
+<li>Backend retries each 3× → <strong>27 requests hit the database</strong></li>
+</ul>
+<p>From a single user clicking a button, 27 database queries. Microsoft&rsquo;s Well-Architected Framework calls this out directly: when two layers each retry three times, the downstream service sees nine attempts per original request. Add a third layer and you&rsquo;re at twenty-seven.</p>
+<p>The rule that follows from this is simple but frequently violated: <strong>only one layer in a call chain should own retry responsibility</strong>. Internal services should fail fast and propagate the error upstream. The layer with the most context, usually the outermost, makes the retry decision. Everything else gets out of the way.</p>
+<h3 id="the-latency-tax-on-healthy-requests">The Latency Tax on Healthy Requests</h3>
+<p>There is one more effect worth naming because it makes retry storms especially insidious: latency inflation that affects requests that haven&rsquo;t failed at all.</p>
+<p>When a service is under retry pressure, its request queues grow. Threads and connection pool slots get consumed by in-flight requests waiting to be processed. Latency rises for <em>every</em> request, including fresh ones that have never encountered an error. As latency rises, more requests exceed their timeout thresholds and join the retry queue, adding more load, pushing latency higher still.</p>
+<p>The mathematical trap is stark. If your client timeout is five seconds and the service is taking ten seconds to process a request, every request generates at least one retry. Your load has doubled before you&rsquo;ve debugged anything. Timeouts continue. Retries compound. The system is spending resources on work it cannot complete.</p>
+<hr>
+<h2 id="part-2-five-anti-patterns-that-kill-you">Part 2: Five Anti-Patterns That Kill You</h2>
+<p>These patterns are not exotic. They appear in codebases written by experienced engineers at well-run companies. Each one looks reasonable until your first real outage.</p>
+<h3 id="anti-pattern-1-the-infinite-loop">Anti-Pattern 1: The Infinite Loop</h3>
+<p>Here is the most direct version of the problem, essentially verbatim from Azure&rsquo;s architecture documentation:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">async</span> Task&lt;<span style="color:#66d9ef">string</span>&gt; GetDataFromServer()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> result = <span style="color:#66d9ef">await</span> httpClient.GetAsync(url);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (result.IsSuccessStatusCode) <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... process result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This looks like resilience. It will retry until it succeeds. In practice, when the downstream service is degraded, this loop runs forever, adding a sustained stream of requests to a system that is already struggling. There is no backoff. There is no ceiling. There is no circuit breaker. The service can never recover, because every moment of recovery capacity is immediately absorbed by this loop re-submitting.</p>
+<p>Microsoft&rsquo;s Well-Architected Framework is unambiguous: <strong>&ldquo;Never implement an endless retry mechanism.&rdquo;</strong></p>
+<p>The fix is always a finite retry count. When retries are exhausted, fail fast and surface the error. The caller, whether that&rsquo;s a user, a queue processor, or a dead-letter handler, can decide what to do next. Your retry loop cannot.</p>
+<h3 id="anti-pattern-2-retrying-before-the-previous-attempt-has-completed">Anti-Pattern 2: Retrying Before the Previous Attempt Has Completed</h3>
+<p>Sometimes called hedging or speculative retries, this pattern involves issuing a second request before the first has returned, running both concurrently in hopes that one will complete faster.</p>
+<p>Hedging is a legitimate technique in very specific circumstances, reducing tail latency for idempotent read operations in low-load scenarios where the cost of an extra request is acceptable. But as a default retry behavior, it is dangerous.</p>
+<p>If the service is experiencing elevated latency, every request is slow. Hedging every slow request doubles the number of in-flight requests. If the latency is caused by resource exhaustion, you have just made the cause worse. You&rsquo;ve transformed a latency problem into a capacity problem. The second request doesn&rsquo;t reduce latency, it consumes the resources that were keeping latency at 10 seconds instead of 30.</p>
+<p>If you use hedging intentionally, it must come with explicit in-flight request budgets. Without a ceiling on concurrent in-flight requests, hedging is just load amplification with extra steps.</p>
+<h3 id="anti-pattern-3-retrying-non-transient-errors">Anti-Pattern 3: Retrying Non-Transient Errors</h3>
+<p>Not every error is worth retrying. Retrying a <code>400 Bad Request</code> will never succeed. The server has already examined your request and rejected it as malformed or invalid. Retrying it again is not persistence, it is noise.</p>
+<p>The classification that should drive retry decisions:</p>
+<p><strong>Always retry</strong>, transient errors that are likely to resolve:</p>
+<ul>
+<li>Network timeouts and connection resets</li>
+<li><code>503 Service Unavailable</code> (especially with a <code>Retry-After</code> header)</li>
+<li><code>429 Too Many Requests</code> (back off and respect the rate limit signal)</li>
+</ul>
+<p><strong>Never retry</strong>, permanent failures where retrying is wasteful:</p>
+<ul>
+<li><code>400 Bad Request</code>, your request is invalid</li>
+<li><code>401 Unauthorized</code>, your credentials are wrong or expired</li>
+<li><code>403 Forbidden</code>, you don&rsquo;t have permission</li>
+<li><code>404 Not Found</code>, the resource doesn&rsquo;t exist</li>
+<li>Business logic validation failures, retry won&rsquo;t change the outcome</li>
+</ul>
+<p><strong>Conditionally retry</strong>, errors that require judgment:</p>
+<ul>
+<li><code>500 Internal Server Error</code>, may be a transient infrastructure event or a permanent bug. Log it, monitor the rate, retry cautiously with a low count.</li>
+</ul>
+<p>For Azure services specifically, don&rsquo;t guess. The Azure SDK&rsquo;s <code>isTransient</code> flag exists for exactly this purpose. For Event Hubs AMQP clients, inspect the <code>AmqpException.IsTransient</code> property before retrying. A <code>QuotaExceededException</code> caused by exceeding the maximum number of consumer groups will never succeed on retry, no amount of retrying changes the quota.</p>
+<h3 id="anti-pattern-4-retrying-non-idempotent-operations-without-safeguards">Anti-Pattern 4: Retrying Non-Idempotent Operations Without Safeguards</h3>
+<p>This is the anti-pattern with the most direct business consequences, and it&rsquo;s the one most often discovered via customer support ticket rather than monitoring.</p>
+<p>Consider a payment processing call that times out. Your retry logic fires. The original request was received and processed, the timeout occurred in the response path, not the request path. You have just charged the customer twice.</p>
+<p>Or an email notification that times out. Retry. The user receives the same notification twice. Or three times.</p>
+<p>Idempotency is not a nice-to-have for retry logic on mutating operations, it is a hard prerequisite. Before enabling retries on any write operation, you must be able to answer the question: <em>what happens if this request is processed more than once?</em></p>
+<p>There are three ways to make mutations safe for retry:</p>
+<p><strong>Idempotency keys</strong>: Include a unique request identifier (e.g., a UUID generated once per user action) in the request. The server stores processed request IDs and deduplicates. If the same ID arrives twice, it returns the original result without reprocessing.</p>
+<p><strong>Natural idempotency</strong>: Design the operation so that running it twice produces the same result as running it once. An upsert (insert or update) is idempotent. A pure insert is not. A <code>PUT</code> that sets a value to a specific state is idempotent. A <code>POST</code> that increments a counter is not.</p>
+<p><strong>Exactly-once queues</strong>: For async workloads, push mutations into a queue with exactly-once delivery semantics and let the queue handle deduplication. The retry happens at the queue level, not the application level.</p>
+<h3 id="anti-pattern-5-synchronized-retries-across-replicas">Anti-Pattern 5: Synchronized Retries Across Replicas</h3>
+<p>This is the most subtle anti-pattern, and the one most engineers discover only in post-mortems.</p>
+<p>Imagine a deployment with 500 service replicas. A downstream dependency experiences a brief outage at 14:23:00. All 500 replicas encounter failures. All 500 kick off their retry logic. All 500 wait exactly 2 seconds. At 14:23:02, all 500 simultaneously fire retry requests.</p>
+<p>The downstream service, which has just started to recover, is immediately hit by 500 simultaneous requests, recreating the same overload that caused the outage. It fails again. All 500 replicas wait exactly 4 seconds. At 14:23:06, 500 simultaneous requests arrive again.</p>
+<p>You can see the problem. Even exponential backoff doesn&rsquo;t help if all replicas are computing the same backoff values. A delay of <code>base × 2^attempt</code> is deterministic. With the same base and the same attempt count, every replica waits the same duration. The synchronized wave doesn&rsquo;t disappear, it reschedules.</p>
+<p>This is why <strong>jitter is not optional</strong>. Jitter is not a minor improvement on top of exponential backoff. It is the mechanism that makes exponential backoff actually work. Without it, backoff is just a synchronized storm with a countdown timer.</p>
+<hr>
+<h2 id="part-3-where-azure-catches-you-by-surprise">Part 3: Where Azure Catches You by Surprise</h2>
+<p>Azure&rsquo;s services have retry behaviors, some documented, some default, some automatic, that interact with your application-layer retries in ways that aren&rsquo;t always obvious. Each of the following can silently multiply the load your backends actually receive.</p>
+<h3 id="azure-sql-transient-errors-are-by-design">Azure SQL: Transient Errors Are By Design</h3>
+<p>Azure SQL generates transient connection errors during routine maintenance operations: failovers, patching cycles, load-balancing reconfigurations. This is not a bug. It is expected, documented behavior, and it means retry logic for Azure SQL is not optional fault tolerance, it is a first-class architectural requirement.</p>
+<p>Microsoft&rsquo;s documented guidance for retry intervals: wait <strong>at least 5 seconds</strong> before the first retry attempt. Shorter intervals risk overwhelming the service and prolonging the recovery. Maximum recommended retry delay: <strong>60 seconds</strong>, with exponential growth between.</p>
+<p>The ADO.NET <code>SqlConnection</code> object has built-in connection retry parameters: <code>ConnectRetryCount</code> (default: 1, max: 255) and <code>ConnectRetryInterval</code> (default: 10 seconds, max: 60 seconds). The defaults are conservative. Know what they are before assuming your connection handling is correct.</p>
+<p>One distinction matters operationally: a connection-phase failure (the <code>SqlConnection.Open()</code> call fails) and a query-phase failure (the connection is open but the query fails) require different retry approaches. For connection failures, retry the connection attempt after a delay. For query failures, establish a <em>fresh connection</em> first, then retry the query. Reusing a broken connection for a retry attempt is a common source of confusing behavior under load.</p>
+<h3 id="azure-event-hubs-the-invisible-throttle">Azure Event Hubs: The Invisible Throttle</h3>
+<p>The Event Hubs SDKs implement exponential backoff by default for retryable errors, but only if you&rsquo;re using the SDK. Custom AMQP clients don&rsquo;t get this behavior for free.</p>
+<p>Kafka-based Event Hubs clients have a particularly subtle failure mode: throttling manifests as <code>throttle_time_ms</code> delays embedded in produce and fetch responses, not as explicit error codes. A Kafka client can be actively throttled without any visible error in its logs. The <code>throttle_time_ms</code> field in the response is the signal to watch.</p>
+<p>When you scale Event Hubs consumers aggressively, you create a risk of backpressure not just on the hub itself, but on downstream services those consumers feed into. More throughput from the hub means more load on whatever your consumers are writing to.</p>
+<p>The most dangerous default: Azure Functions retry policy supports a value of <code>-1</code> for infinite retries. Microsoft&rsquo;s own documentation explicitly warns that <strong>indefinite retries should almost never be used with the Event Hub trigger binding</strong>. If your Functions retry policy is set to <code>-1</code> and Event Hubs encounters a persistent error, your function will retry forever, blocking partition processing and accumulating lag.</p>
+<p>Before retrying any Event Hubs error, inspect the <code>isTransient</code> flag on <code>AmqpException</code>. Errors like <code>QuotaExceededException</code>, triggered when you exceed the 20 consumer group limit, for example, are permanent configuration problems. No amount of retrying resolves them.</p>
+<h3 id="azure-apim-the-retry-multiplier-in-your-gateway">Azure APIM: The Retry Multiplier in Your Gateway</h3>
+<p>APIM&rsquo;s <code>&lt;retry&gt;</code> policy lets you configure retry behavior at the gateway layer. This is a powerful feature with a specific trap: if both your client and APIM are retrying independently, the backend sees the product of both retry counts, not the sum.</p>
+<p>Client retries 3×, APIM retries 3× each time, the backend receives 9 requests per original user action. Add another retry layer (a backend service that retries its own database calls) and you&rsquo;re at 27.</p>
+<p>The principle: <strong>pick one layer to own retry responsibility.</strong> For external-facing APIs, APIM is typically the right owner, it has visibility into backend health and can implement circuit breaking at the gateway level. When APIM owns retries, internal services should be configured to fail fast. They propagate errors; they don&rsquo;t absorb them.</p>
+<p>When APIM is retrying, it should also be responsible for respecting <code>Retry-After</code> headers from backends and for honoring circuit breaker state. The retry policy in APIM is powerful enough to implement these correctly; use it.</p>
+<h3 id="azure-app-gateway-and-front-door-silent-gateway-layer-retries">Azure App Gateway and Front Door: Silent Gateway-Layer Retries</h3>
+<p>This is the most frequently missed retry source in Azure architectures.</p>
+<p><strong>Application Gateway v2</strong>: when a backend member times out, App Gateway doesn&rsquo;t immediately return a <code>504</code>. It automatically retries the request against a <em>second backend pool member</em>. If your application also retries after receiving the <code>504</code>, you have silently doubled the load on your backend pool, with no visibility into the gateway-level retry in your application logs.</p>
+<p><strong>Azure Front Door</strong>: explicitly recommends setting a forwarding timeout that is aligned to your origin&rsquo;s actual response time. If you leave the timeout mismatched, Front Door holds connections open longer than necessary, consuming capacity on both ends, and may trigger retry behavior that compounds with application-layer retries.</p>
+<p>Front Door&rsquo;s WAF includes rate-limiting rules that are explicitly documented as a defense against retry storms. These are not optional production hardening, they are a named line of defense against this exact failure mode. If you&rsquo;re running Front Door without WAF rate limiting configured, you are one client retry storm away from a capacity incident.</p>
+<p>The key question to ask about every layer in your architecture: <em>who is retrying, and how many times?</em> Audit your entire call chain before you&rsquo;re reading a post-mortem.</p>
+<hr>
+<h2 id="part-4-how-to-actually-design-this-correctly">Part 4: How to Actually Design This Correctly</h2>
+<p>Safe retry logic is not a single setting. It is a layered system where each component handles a specific aspect of the problem.</p>
+<h3 id="exponential-backoff-the-foundation">Exponential Backoff: The Foundation</h3>
+<p>The formula: <code>delay = min(cap, base × 2^attempt)</code></p>
+<p>Attempt 1 waits 1 second. Attempt 2 waits 2 seconds. Attempt 3 waits 4 seconds. Each subsequent attempt doubles, until the delay is capped at a maximum. For Azure SQL, Microsoft recommends a base of 5 seconds and a cap of 60 seconds, a conservative baseline that reflects real measured recovery times.</p>
+<p>The purpose of backoff is to give the recovering service time to stabilize between retry waves. Without it, each retry attempt arrives immediately after the previous failure, giving the service no recovery window at all.</p>
+<h3 id="jitter-the-mechanism-that-makes-backoff-work">Jitter: The Mechanism That Makes Backoff Work</h3>
+<p>Let&rsquo;s be precise about this, because it&rsquo;s frequently treated as a minor optimization when it&rsquo;s actually the core of the solution.</p>
+<p>Without jitter, exponential backoff is deterministic. If 500 replicas all computed their first retry delay as 2 seconds, they all wait exactly 2 seconds and fire simultaneously. The retry wave is just as synchronized as if there were no backoff at all, it&rsquo;s just 2 seconds later. Jitter breaks the synchronization by making each replica compute a slightly different delay.</p>
+<p>There are three common jitter strategies:</p>
+<p><strong>Full jitter</strong> (recommended for most scenarios):</p>
+<pre tabindex="0"><code>delay = random(0, min(cap, base × 2^attempt))
+</code></pre><p>Maximum spread between retry attempts. Most effective at desynchronizing a fleet of clients.</p>
+<p><strong>Equal jitter</strong> (when a minimum wait is required):</p>
+<pre tabindex="0"><code>delay = min(cap, base × 2^attempt) / 2 + random(0, min(cap, base × 2^attempt) / 2)
+</code></pre><p>Guarantees a minimum wait while still adding randomness.</p>
+<p><strong>Decorrelated jitter</strong> (AWS&rsquo;s recommendation for some scenarios):</p>
+<pre tabindex="0"><code>delay = random(base, prev_delay × 3)
+</code></pre><p>Breaks correlation with the previous attempt&rsquo;s timing rather than with the attempt count.</p>
+<p>Full jitter typically performs best in practice for cloud service scenarios. The math is simple. Adding <code>random(0, cap)</code> to every retry interval in your system, and to every TTL, costs a few minutes to implement and prevents the most common trigger of synchronized storms.</p>
+<h3 id="circuit-breakers-stopping-the-death-spiral">Circuit Breakers: Stopping the Death Spiral</h3>
+<p>A circuit breaker is a state machine that wraps calls to a downstream service. It tracks the failure rate. When failures exceed a threshold, the circuit <strong>opens</strong>: all subsequent requests fail immediately, without hitting the downstream service at all. After a cooldown period, the circuit enters <strong>half-open</strong> state and allows a single probe request through. If the probe succeeds, the circuit closes and normal operation resumes. If the probe fails, the circuit opens again and the cooldown restarts.</p>
+<p>The critical property is what happens during the open state: requests fail <em>fast</em>. The downstream service receives no traffic. This gives it the breathing room to actually recover, something it cannot do while your retry logic is continuously hammering it.</p>
+<pre tabindex="0"><code>CLOSED (normal) → [failure threshold exceeded] → OPEN (failing fast)
+OPEN → [cooldown elapsed] → HALF-OPEN (single probe)
+HALF-OPEN → [probe succeeds] → CLOSED
+HALF-OPEN → [probe fails] → OPEN
+</code></pre><p>In the Azure ecosystem, <strong>Polly</strong> is the standard .NET implementation. It supports circuit breakers, retry policies, timeout policies, and bulkheads, and it composes them into a resilience pipeline. For Java, <strong>resilience4j</strong> is the modern choice (Hystrix is largely in maintenance mode). Both libraries implement the patterns correctly and are well-tested at production scale. Do not write your own circuit breaker from scratch.</p>
+<h3 id="retry-limits-per-request-and-fleet-wide">Retry Limits: Per-Request and Fleet-Wide</h3>
+<p>Per-request limits are the baseline: set a finite maximum retry count, and when it&rsquo;s exhausted, fail fast. For Event Hubs specifically, never set this to <code>-1</code>.</p>
+<p>But per-request limits alone are not sufficient at fleet scale. Consider 500 replicas each configured with a maximum of 3 retries. On a shared failure event, each replica fires 3 retries, that is 1,500 simultaneous retry attempts against the recovering service. Each replica stayed within its limit. The fleet did not.</p>
+<p><strong>Retry budgets</strong> address this by applying a global limit across all instances. Rather than each replica independently deciding to retry, the fleet collectively budgets a maximum retry rate, for example, no more than 1,000 retries per minute across all instances. Requests that would exceed the budget are rejected at the source rather than allowed to pile onto the downstream service.</p>
+<p>Implementing retry budgets requires coordination infrastructure, a rate limiter with a shared counter, often backed by Redis or a similar fast store. The operational complexity is real. But for high-replica-count services hitting shared dependencies, it is the difference between a retry policy that helps and one that amplifies.</p>
+<h3 id="additional-safeguards">Additional Safeguards</h3>
+<p><strong>Honor <code>Retry-After</code> headers.</strong> When a server returns <code>503</code> or <code>429</code> with a <code>Retry-After</code> value, that number is the server&rsquo;s own estimate of when it will be ready to accept requests again. Retrying before that time is not aggressive resilience, it is ignoring the clearest signal the server can give you. Read the header. Respect it.</p>
+<p><strong>Idempotency before retry.</strong> For any mutating operation, confirm idempotency before enabling retries. Use idempotency keys for operations that modify external state. Design upserts rather than inserts where possible. Treat idempotency as a precondition, not an afterthought.</p>
+<p><strong>Dead-letter queues for async workloads.</strong> When retries on a background or queue-based operation are exhausted, the message should move to a dead-letter queue, not be silently dropped, and not trigger an infinite retry loop. Dead-letter queues preserve the failed work for human review and controlled reprocessing.</p>
+<p><strong>Use official SDKs.</strong> The Azure SDKs implement correct retry behavior by default. They respect <code>Retry-After</code> headers, classify errors by transience, and use jittered exponential backoff out of the box. Custom AMQP clients and raw HTTP clients don&rsquo;t get any of this. If you&rsquo;re writing your own retry logic from scratch, you are starting from behind. Use Polly for .NET, <code>retry</code> for Node.js, or the equivalent for your stack. Hand-rolled retry loops are where every anti-pattern in this post comes from.</p>
+<hr>
+<h2 id="conclusion-retries-are-load">Conclusion: Retries Are Load</h2>
+<p>The mental model shift that makes everything else follow: retries are not a safety mechanism that operates outside your normal load budget. They are requests. They consume the same resources as any other request. When you fire a retry at a struggling service, you are adding load to a casualty.</p>
+<p>The failure mode of naïve retry logic is invisible during normal operations. When failures are rare, retries work fine. The service recovers, the retry succeeds, and nobody notices the gap in the design. The vulnerability surfaces only under stress, exactly when you need reliability most. This is why retry logic must be load-tested under adversarial conditions: inject failures, simulate partial degradation, observe how your retry behavior changes system load as things break.</p>
+<p>The question is not &ldquo;how do we retry?&rdquo; The question is &ldquo;how do we make sure our retry behavior doesn&rsquo;t prevent recovery?&rdquo;</p>
+<p>Seven principles to carry forward:</p>
+<ol>
+<li><strong>Retries need backoff and jitter. Both. Neither alone is sufficient.</strong></li>
+<li><strong>Only one layer in a call chain should own retry logic. Audit your stack.</strong></li>
+<li><strong>Classify errors before retrying. Never retry permanent failures.</strong></li>
+<li><strong>Ensure idempotency before retrying mutating operations.</strong></li>
+<li><strong>Circuit breakers stop spirals. Retry budgets prevent fleet-level amplification.</strong></li>
+<li><strong>Honor <code>Retry-After</code>. The service is telling you when to try again.</strong></li>
+<li><strong>Test your retry behavior under load, not just in isolation.</strong></li>
+</ol>
+<p>The engineers who wrote those infinite retry loops weren&rsquo;t being careless. They were doing what they&rsquo;d been taught. The half-truth, &ldquo;add retries&rdquo;, is widespread and well-intentioned. This post is an argument for the complete truth: add retries, with exponential backoff, with jitter, with circuit breakers, with finite limits, with idempotency, with respect for what the downstream service is telling you.</p>
+<p>Resilience is not optimism. It is load management.</p>
+<hr>
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="retry-decision-tree">Retry Decision Tree</h3>
+<pre tabindex="0"><code>Request fails
+└── Is the error transient? (timeout, 503+Retry-After, 429)
+    ├── No  → Fail immediately. Do not retry.
+    └── Yes → Is the circuit breaker open?
+              ├── Yes → Fail immediately. Wait for half-open probe.
+              └── No  → Have we exceeded our retry budget?
+                        ├── Yes → Fail. Route to dead-letter queue if async.
+                        └── No  → Compute: exponential backoff + full jitter
+                                  └── Is the operation idempotent?
+                                      ├── No  → Attach idempotency key, then retry.
+                                      └── Yes → Retry.
+</code></pre><h3 id="jitter-strategy-reference">Jitter Strategy Reference</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Strategy</th>
+          <th>Formula</th>
+          <th>Best For</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Full jitter</td>
+          <td><code>random(0, min(cap, base × 2ⁿ))</code></td>
+          <td>Most cloud scenarios; maximum desynchronization</td>
+      </tr>
+      <tr>
+          <td>Equal jitter</td>
+          <td><code>cap/2 + random(0, cap/2)</code></td>
+          <td>When a guaranteed minimum wait is required</td>
+      </tr>
+      <tr>
+          <td>Decorrelated</td>
+          <td><code>random(base, prev_delay × 3)</code></td>
+          <td>Breaking correlation with previous attempt timing</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="azure-service-retry-defaults">Azure Service Retry Defaults</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Service</th>
+          <th>Default Behavior</th>
+          <th>Key Risk</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Azure SQL (ADO.NET)</td>
+          <td><code>ConnectRetryCount=1</code>, <code>ConnectRetryInterval=10s</code></td>
+          <td>Likely under-configured for your workload</td>
+      </tr>
+      <tr>
+          <td>Event Hubs SDK</td>
+          <td>Exponential backoff built in</td>
+          <td>Custom AMQP clients get none of this</td>
+      </tr>
+      <tr>
+          <td>Azure Functions + Event Hubs</td>
+          <td>Configurable; <code>-1</code> is valid config</td>
+          <td><code>-1</code> (infinite) should never be used in production</td>
+      </tr>
+      <tr>
+          <td>Application Gateway v2</td>
+          <td>Auto-retries to second backend on timeout</td>
+          <td>Silent 2× multiplier on backend load</td>
+      </tr>
+      <tr>
+          <td>APIM <code>&lt;retry&gt;</code> policy</td>
+          <td>Configurable per policy</td>
+          <td>Compounds client-layer retries multiplicatively</td>
+      </tr>
+      <tr>
+          <td>Azure Front Door</td>
+          <td>Forwarding timeout must be configured explicitly</td>
+          <td>Mismatched timeouts cause unnecessary holds and retries</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/azure/architecture/antipatterns/retry-storm/">Azure Architecture: Retry Storm Antipattern</a></li>
+<li><a href="https://learn.microsoft.com/azure/well-architected/design-guides/handle-transient-faults">Azure Well-Architected Framework: Recommendations for Handling Transient Faults</a></li>
+<li><a href="https://learn.microsoft.com/azure/architecture/patterns/retry">Azure Architecture: Retry Pattern</a></li>
+<li><a href="https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker">Azure Architecture: Circuit Breaker Pattern</a></li>
+<li><a href="https://learn.microsoft.com/azure/azure-sql/database/troubleshoot-common-connectivity-issues">Azure SQL Database: Troubleshoot Transient Connection Errors</a></li>
+<li><a href="https://learn.microsoft.com/azure/architecture/serverless/event-hubs-functions/resilient-design">Azure Event Hubs: Resilient Design with Functions</a></li>
+<li><a href="https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/">AWS Architecture Blog: Exponential Backoff and Jitter</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Thundering_herd_problem">Wikipedia: Thundering Herd Problem</a></li>
+</ul>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/distributed-systems/">distributed-systems</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/resilience/">resilience</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/retry-logic/">retry-logic</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure/">azure</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/backoff/">backoff</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/jitter/">jitter</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/circuit-breaker/">circuit-breaker</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure-sql/">azure-sql</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/event-hubs/">event-hubs</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/apim/">apim</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/app-gateway/">app-gateway</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure-front-door/">azure-front-door</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/sre/">sre</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" data-tooltip="The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure" aria-label="PREVIOUS: The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2026 Ebby Peter. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/" data-tooltip="The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure" aria-label="PREVIOUS: The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fthe-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fthe-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fthe-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fthe-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fthe-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ebby Peter</h4>
+    
+      <div id="about-card-bio">Blueprint. Build. Ship. Repeat!</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Cloud Architect | Cloud Consultant | Cloud Enthusiast
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        Wellington, New Zealand
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('http://localhost:1313/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="http://localhost:1313/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

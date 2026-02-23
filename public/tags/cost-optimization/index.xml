@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cost-Optimization on Ebby Builds!</title>
+    <link>http://localhost:1313/tags/cost-optimization/</link>
+    <description>Recent content in Cost-Optimization on Ebby Builds!</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/cost-optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Hidden Cost of &#39;Just Turn On Logging&#39; in Azure</title>
+      <link>http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/</link>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/01/the-hidden-cost-of-just-turn-on-logging-in-azure/</guid>
+      <description>Your team enabled logging everywhere, a responsible move. Then the Azure bill arrived. This post traces exactly why Log Analytics costs spiral without warning, what the AzureDiagnostics table is quietly doing to your budget, and how resource-specific tables plus DCR transformations give you back control.</description>
+    </item>
+  </channel>
+</rss>
