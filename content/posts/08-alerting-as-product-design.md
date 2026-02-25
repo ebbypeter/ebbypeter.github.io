@@ -1,7 +1,7 @@
 ---
 title: "Your Alerts Are a Product. They're Just a Bad One."
-draft: true
-date: 2026-02-03
+draft: false
+date: 2026-02-24
 tags:
   - alerting
   - sre
