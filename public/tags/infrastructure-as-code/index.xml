@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Infrastructure-as-Code on Ebby Builds!</title>
+    <link>http://localhost:1313/tags/infrastructure-as-code/</link>
+    <description>Recent content in Infrastructure-as-Code on Ebby Builds!</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 10 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/infrastructure-as-code/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Your DR Plan Has Never Been Tested</title>
+      <link>http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/</guid>
+      <description>Most Azure DR tests confirm the secondary came up. They don&amp;rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&amp;rsquo;t silently destroy the incident window. Here&amp;rsquo;s how to test DR honestly — with exit criteria that actually prove the plan works.</description>
+    </item>
+  </channel>
+</rss>

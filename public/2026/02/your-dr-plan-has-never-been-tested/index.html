@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Your DR Plan Has Never Been Tested",
+  
+  "datePublished": "2026-02-10T00:00:00Z",
+  "dateModified": "2026-02-10T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Ebby Peter",
+    
+    "image": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "http:\/\/localhost:1313\/2026\/02\/your-dr-plan-has-never-been-tested\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ebby Builds!",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5"
+    }
+    
+  },
+  "description": "Most Azure DR tests confirm the secondary came up. They don\u0026rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won\u0026rsquo;t silently destroy the incident window. Here\u0026rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.156.0 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Ebby Peter">
+<meta name="keywords" content="">
+<meta name="description" content="Most Azure DR tests confirm the secondary came up. They don&rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&rsquo;t silently destroy the incident window. Here&rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.">
+
+
+<meta property="og:description" content="Most Azure DR tests confirm the secondary came up. They don&rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&rsquo;t silently destroy the incident window. Here&rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Your DR Plan Has Never Been Tested">
+<meta name="twitter:title" content="Your DR Plan Has Never Been Tested">
+<meta property="og:url" content="http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/">
+<meta property="twitter:url" content="http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/">
+<meta property="og:site_name" content="Ebby Builds!">
+<meta property="og:description" content="Most Azure DR tests confirm the secondary came up. They don&rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&rsquo;t silently destroy the incident window. Here&rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.">
+<meta name="twitter:description" content="Most Azure DR tests confirm the secondary came up. They don&rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&rsquo;t silently destroy the incident window. Here&rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2026-02-10T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2026-02-10T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="Azure">
+    
+      <meta property="article:section" content="Architecture">
+    
+      <meta property="article:section" content="Site Reliability Engineering">
+    
+  
+  
+    
+      <meta property="article:tag" content="azure">
+    
+      <meta property="article:tag" content="disaster-recovery">
+    
+      <meta property="article:tag" content="sre">
+    
+      <meta property="article:tag" content="resilience">
+    
+      <meta property="article:tag" content="infrastructure-as-code">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@ebbypeter">
+
+
+  <meta name="twitter:creator" content="@ebbypeter">
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=640">
+
+
+
+
+
+
+    <title>Your DR Plan Has Never Been Tested</title>
+
+    <link rel="icon" href="http://localhost:1313/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://localhost:1313/" aria-label="Go to homepage">Ebby Builds!</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://localhost:1313/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://localhost:1313/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ebby Peter</h4>
+        
+          <h5 class="sidebar-profile-bio">Blueprint. Build. Ship. Repeat!</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/ebbypeter/" target="_blank" rel="noopener" title="LinkedIn">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-linkedin" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">LinkedIn</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/ebbypeter" target="_blank" rel="noopener" title="Resume">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-briefcase" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Resume</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://localhost:1313/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Your DR Plan Has Never Been Tested
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2026-02-10T00:00:00Z">
+        
+  February 10, 2026
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://localhost:1313/categories/azure">Azure</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/architecture">Architecture</a>, 
+    
+      <a class="category-link" href="http://localhost:1313/categories/site-reliability-engineering">Site Reliability Engineering</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p><em>Most DR tests prove the secondary came up. Not that your RTO is real, your data is intact, or your failback won&rsquo;t destroy the incident window. Let&rsquo;s fix that.</em></p>
+<hr>
+<p>There&rsquo;s a version of this story that plays out in a lot of engineering organizations,
+and it goes roughly like this.</p>
+<p>The team schedules a DR test on a Saturday morning. They initiate a failover to the
+secondary region. The secondary comes up. Traffic Manager switches. Someone checks
+the portal, sees green, and marks the test complete. The compliance ticket closes.
+The DR plan is valid for another year.</p>
+<p>What nobody checked: whether users were actually being served at minute 91 of a
+two-hour RTO window, or whether the application was still warming up its connection
+pools. Whether the monitoring dashboards were even configured in the DR region —
+because they weren&rsquo;t, which is why no alerts fired. Whether the database replication
+lag had been running at 45 seconds under Friday&rsquo;s write load, meaning a forced
+failover would have silently dropped nearly a minute of transactions. And whether
+anyone had thought about what happens when the primary region comes back and the
+team needs to fail back with 40 minutes of writes sitting on the secondary that the
+old primary has never seen.</p>
+<p>The test passed. The plan is fiction.</p>
+<p>Passing a DR test and having a DR plan that works are two different things. The gap
+between them is almost always the same thing: nobody defined what &ldquo;passing&rdquo; meant
+before they started.</p>
+<hr>
+<h2 id="what-youre-actually-measuring-vs-what-you-think-you-are">What You&rsquo;re Actually Measuring (vs. What You Think You Are)</h2>
+<p>Most DR tests measure infrastructure health and elapsed time. The secondary region
+came up, check. Time from failover initiation to infrastructure-reports-healthy was
+under the RTO threshold, check. Test passed.</p>
+<p>These are real measurements. They&rsquo;re just not the ones that matter to users.</p>
+<p>What actually matters is user-visible RTO: the window between the moment the first
+user request failed and the moment the first user request <em>succeeded against the
+secondary</em>. That&rsquo;s not the same as &ldquo;when we issued the failover command&rdquo;, it&rsquo;s later.
+Often significantly later, for reasons we&rsquo;ll get to. And it&rsquo;s not the same as &ldquo;when
+infrastructure reported healthy&rdquo;, because infrastructure reporting healthy and
+applications serving correct responses are two different events.</p>
+<p>Similarly for RPO. The number in your DR plan is probably something like &ldquo;&lt; 5 minutes&rdquo;
+or &ldquo;&lt; 15 minutes.&rdquo; What that actually means is: if a disaster happened right now, the
+maximum amount of data you&rsquo;d lose is bounded by that window. But unless someone has
+measured the replication lag under realistic write load and confirmed it stays within
+that bound, the number is aspirational. It&rsquo;s what the architecture is <em>designed</em> to
+achieve, not what it actually achieves on a busy Thursday afternoon.</p>
+<p>And then there&rsquo;s application correctness, which most teams don&rsquo;t test at all. The
+homepage returning 200 is not a valid DR test. Can a user authenticate? Can they
+complete a write transaction and get a consistent response? Are background jobs
+running, or have they silently stopped because the job scheduler is pointing at a
+queue in the primary region that&rsquo;s now unreachable? These questions have answers.
+Most DR tests never ask them.</p>
+<p>There&rsquo;s another gap that tends to go unnoticed until an actual incident: monitoring
+coverage in the DR region. Alert silence during a DR test is not evidence that nothing
+is wrong. It often means nothing is watching. If your alert rules and dashboards live
+in Azure Monitor workspaces that weren&rsquo;t deployed to the secondary region, or if your
+Application Insights instance is still pointing at resources in the primary, your
+observability stack goes dark the moment you need it most. This is one of those
+configuration drift problems that&rsquo;s invisible until it isn&rsquo;t.</p>
+<hr>
+<h2 id="the-timing-chain-azure-doesnt-advertise">The Timing Chain Azure Doesn&rsquo;t Advertise</h2>
+<p>The Azure documentation is accurate. What it doesn&rsquo;t do is assemble a complete picture
+of what actually happens between &ldquo;the primary failed&rdquo; and &ldquo;users are being served by
+the secondary.&rdquo; Understanding that chain is what lets you build a test that measures
+the right things.</p>
+<h3 id="traffic-manager">Traffic Manager</h3>
+<p>Traffic Manager works at the DNS layer. It does not proxy traffic, once a client
+has resolved the DNS name to an IP address, Traffic Manager is out of the loop. That
+distinction matters enormously for RTO calculations.</p>
+<p>When your primary region fails, Traffic Manager detects the failure through health
+probes, updates its DNS response to point to the secondary, and from that point forward,
+new DNS lookups return the secondary&rsquo;s endpoint. But clients that have already resolved
+the DNS name, which is most of them, continue connecting to the primary IP until
+their cached DNS entry expires.</p>
+<p>The default TTL for Traffic Manager is 300 seconds. That&rsquo;s five minutes of clients
+continuing to hammer a dead endpoint after Traffic Manager has already switched. Add
+to that the detection time: with default probe settings (30-second interval, 3
+consecutive failures required), Traffic Manager doesn&rsquo;t even know the primary is down
+until at least 90 seconds have passed. The full formula is:</p>
+<pre tabindex="0"><code>Failover window = TTL + (retry count × probe interval)
+        = 300 + (3 × 30)
+        = 390 seconds (~6.5 minutes)
+</code></pre><p>That&rsquo;s the minimum gap between primary failure and new clients receiving the secondary
+endpoint, at default settings, before any application warm-up, before connection pool
+initialization, before anything application-level happens.</p>
+<p>You can tune this aggressively: TTL of 10 seconds, probe interval of 10 seconds with
+3 retries gets you down to roughly 40 seconds. But lower TTL means more DNS queries
+(Traffic Manager pricing is query-based), and lower probe intervals mean more probe
+traffic against your origin. The right values depend on your RTO target and what your
+origin can absorb.</p>
+<p>There&rsquo;s a subtler problem with Traffic Manager health probes that catches teams off
+guard. Traffic Manager can only evaluate what the health probe endpoint returns. If
+your probe endpoint is a simple HTTP check against the web process, Traffic Manager
+has no idea whether the database finished promoting, whether the connection pool is
+healthy, or whether the app is returning 500s to every actual user request. A health
+probe that checks &ldquo;is the web process running&rdquo; will return 200 while users are getting
+database connection errors downstream. Your probe endpoint needs to check the
+dependencies that actually matter, database reachability, cache availability, any
+downstream services required for the application to function.</p>
+<h3 id="front-door">Front Door</h3>
+<p>Front Door is a different story because it actually proxies traffic, it&rsquo;s a reverse
+proxy running at Microsoft&rsquo;s global POPs. This means the cutover is cleaner once
+detection happens, because you&rsquo;re not dealing with client-side DNS caching in the
+same way.</p>
+<p>But detection still takes time. With default settings, 30-second probe interval, 3
+consecutive failures required, Front Door won&rsquo;t mark an origin unhealthy for up to
+90 seconds. And there&rsquo;s a documented behavior that surprises most people who haven&rsquo;t
+tested it explicitly: if every origin in an origin group fails its health checks, Front
+Door doesn&rsquo;t drop traffic. It routes round-robin across all of them. Which means
+during a full-region outage, before the secondary&rsquo;s health checks have confirmed it&rsquo;s
+healthy, users may be getting errors from both endpoints simultaneously. Worth knowing.
+Worth testing.</p>
+<h3 id="azure-sql-auto-failover-groups">Azure SQL Auto-Failover Groups</h3>
+<p>SQL cross-region replication is always asynchronous. There&rsquo;s no synchronous cross-region
+option for Azure SQL Database. This means there is always a replication lag, a window
+of committed transactions on the primary that haven&rsquo;t yet been hardened to the secondary.
+Under normal conditions, Microsoft targets less than 5 seconds. Under high write load
+with a secondary that&rsquo;s underpowered relative to the primary, that lag can grow
+considerably and will keep growing until the secondary falls so far behind it becomes
+unavailable.</p>
+<p>Here&rsquo;s the part that most teams get wrong: there are two kinds of failover, and they
+have completely different RPO characteristics.</p>
+<p><strong>Planned failover</strong>, the kind you can initiate manually when there&rsquo;s no active outage
+— waits for the secondary to fully synchronize before promoting it to primary. Zero
+data loss, essentially guaranteed. RTO is typically under 60 seconds. This is the
+failover most teams test.</p>
+<p><strong>Forced failover</strong>, what happens when the primary region is actually inaccessible —
+promotes the secondary immediately, regardless of replication state. Data loss is
+possible and the extent of it is exactly whatever was in the replication lag at the
+time. This is what happens in a real disaster.</p>
+<p>If you&rsquo;ve only ever tested planned failover, you&rsquo;ve never tested the scenario that
+actually matters. The replication lag at the moment of a real outage is the variable
+nobody has measured.</p>
+<p>The key DMV here is <code>sys.dm_geo_replication_link_status</code>, specifically the
+<code>replication_lag_sec</code> column. This tells you, right now, how many seconds of
+transactions on the primary haven&rsquo;t been hardened to the secondary. If that number is
+running at 8 seconds during normal operations, your real-world RPO floor is 8 seconds
+— not the &lt; 5 seconds in the architecture diagram. And as of 2025, this is also
+surfaced as a native Azure Monitor metric with one-minute granularity and 93-day
+retention, so you can set alerts and see trends over time rather than just spot-checking.</p>
+<p>There&rsquo;s one more thing worth calling out: <code>GracePeriodWithDataLossHours</code>. This
+parameter controls how long Azure SQL waits before auto-triggering a forced failover
+when the primary is unreachable. The default is 1 hour. That means if your primary
+goes down and you haven&rsquo;t manually intervened, your secondary won&rsquo;t automatically
+promote for an hour. For a lot of workloads, that&rsquo;s a silent assumption baked into
+the architecture that nobody has thought through.</p>
+<h3 id="azure-storage-grs-and-ra-grs">Azure Storage GRS and RA-GRS</h3>
+<p>Storage replication is also asynchronous, and the RPO picture is similar: typically
+less than 15 minutes, but with no contractual SLA on replication delay, unless you&rsquo;ve
+opted into Geo Priority Replication for Block Blobs, which went GA in late 2025 and
+provides an actual 15-minute SLA covering 99% of billing months.</p>
+<p>The number that matters is <code>Last Sync Time</code>, available in the portal under
+Redundancy → Prepare for failover, or via
+<code>az storage account show --query &quot;geoReplicationStats&quot;</code>. This tells you the most
+recent point at which all primary writes are guaranteed to be present on the secondary.
+Anything written after that timestamp is at risk in a failover.</p>
+<p>What frequently gets left out of RTO calculations: initiating a storage account failover
+takes 30 to 60 minutes, depending on account size and number of objects. After that
+failover completes, the account is LRS in the new region, not GRS. You have to
+explicitly re-enable geo-redundancy and wait for replication to re-establish before
+you have any redundancy again. That recovery-from-recovery window is often months long
+in practice because teams forget to re-enable it.</p>
+<hr>
+<h2 id="how-to-test-without-taking-production-down">How to Test Without Taking Production Down</h2>
+<p>Before getting into testing approaches, it&rsquo;s worth naming an assumption that makes all of them moot: &ldquo;we&rsquo;ll IaC it when we need it.&rdquo; This is more common than it should be, a hub network in the secondary region, no app stack deployed, an assumption that Terraform or Bicep will save the day when the primary goes down. The theory is sound. The practice fails because nobody has ever run that IaC under incident conditions, with a degraded team, against a primary region they can&rsquo;t access to verify state, with pipeline credentials that may or may not be stored somewhere the DR region can reach. The first time that IaC runs for real is during the disaster itself, which is, definitionally, the worst possible moment to discover that a module has a hardcoded region variable, a managed identity doesn&rsquo;t have the right permissions in the secondary, or the pipeline agent pool lives in the region that just went down. &ldquo;We can deploy it when we need it&rdquo; is not a DR strategy. It&rsquo;s a hypothesis that has never been tested.</p>
+<p>Testing DR properly doesn&rsquo;t require risking a production outage. There are four
+approaches that actually move the needle, and importantly, they build on each other.
+Start here, in this order.</p>
+<p><strong>Health probe poisoning</strong> is the fastest way to measure your actual failover detection
+gap without touching anything in the primary. Configure your health probe endpoint to
+return a non-200 response, through a feature flag, a temporary config change, whatever
+you have available, and watch what happens. Specifically: how long does it take Traffic
+Manager or Front Door to update its routing? And how long after that do clients actually
+receive the secondary endpoint? The delta between those two events is your DNS TTL in
+practice, which may not match what&rsquo;s configured, because intermediate resolvers may
+be caching aggressively. Run a synthetic monitor from Application Insights Availability
+Tests pointed directly at your DR FQDN, not your primary, so you can observe recovery
+from a real client perspective. This test has zero risk to production traffic and tells
+you your real RTO floor before you&rsquo;ve touched a database or a compute layer.</p>
+<p><strong>Replication lag load testing</strong> answers the question most teams have never asked: does
+your replication lag stay within your RPO commitment under realistic write load?
+Drive your primary database and storage at production-representative write volumes for
+a sustained period, not a trivial benchmark, but something that approximates a busy
+business day. Watch <code>replication_lag_sec</code> and <code>geoReplicationStats.lastSyncTime</code>
+continuously during that window. If the lag stays at 2 seconds, your RPO commitment is
+credible. If it drifts to 45 seconds and keeps climbing, you have a secondary that&rsquo;s
+underpowered for the write profile it would need to absorb, and your RPO commitment
+is a number someone invented. This test runs against production during off-peak hours
+with zero impact on availability.</p>
+<p><strong>Dependency failover drills</strong> let you test component resilience in isolation. Initiate
+a failover for a single SQL Failover Group, or a single storage account, without doing
+anything at the regional level. Watch the application layer respond. Does it reconnect
+cleanly, or does it throw a cascade of errors before retry logic kicks in? Do any
+services hard-code the primary region endpoint and fail completely? Is the connection
+pool recovery time acceptable? This drill tends to surface the configuration drift
+issues, hardcoded endpoints, missing secrets in the secondary Key Vault, RBAC
+assignments that were made to production but never mirrored, before they surface
+during a real event.</p>
+<p><strong>Full failover with traffic isolation</strong> is the real test, done safely. Use Front
+Door weighted routing to shift 5 to 10% of traffic, or a specific internal user
+cohort, if you can route by identity, to the secondary region while the majority
+stays on primary. Validate application behavior under real request shapes. Measure
+error rates and latency during the transition. This isn&rsquo;t a simulation. It&rsquo;s real
+traffic hitting the real DR stack, just not all of it. If something is broken in the
+secondary region, you find out with 10% of traffic, not 100%.</p>
+<hr>
+<h2 id="defining-pass-before-you-start">Defining &ldquo;Pass&rdquo; Before You Start</h2>
+<p>This is the part that determines whether you&rsquo;re running a DR test or a DR exercise.
+The distinction is simple: a test has pass/fail criteria defined before you start. An
+exercise is a walk-through that produces observations.</p>
+<p>Both have value. But only one tells you whether your DR plan works.</p>
+<p>Before the test starts, write down three things.</p>
+<p><strong>The user-visible RTO target.</strong> Define T₀ as the moment the first user request fails
+— not the moment someone noticed the problem, not the moment the failover was
+initiated. Define what &ldquo;serving&rdquo; means: not infrastructure healthy, but a specific
+transaction completing successfully against the secondary. State it plainly: &ldquo;At
+T₀ + 45 minutes, a user must be able to authenticate, submit an order, and receive
+a confirmation. If they cannot, the test has failed.&rdquo;</p>
+<p><strong>The actual data loss window.</strong> Before initiating failover, write a sentinel
+transaction, a specific, identifiable write with a known timestamp. After failover
+completes, check whether that transaction is visible on the secondary. If it is,
+record how far it was from the failover initiation, that&rsquo;s the replication lag at
+time of failure. If it isn&rsquo;t visible, you&rsquo;ve lost at least that transaction. Compare
+the result against your committed RPO. If the loss exceeds the commitment, the test
+failed.</p>
+<p><strong>The application smoke test.</strong> Define a suite, authentication, a read, a write,
+a background job check, that must pass against the secondary before the test is
+complete. Not &ldquo;the homepage loaded.&rdquo; A real business transaction. Run this suite
+from outside Azure, from a network path that doesn&rsquo;t have access to the primary,
+so you&rsquo;re validating what an actual user would experience.</p>
+<p>When the test runs and you measure these three things, one of two things happens.
+Either the numbers match the commitments, in which case you have real evidence that
+your DR plan works. Or they don&rsquo;t, in which case you have specific data about where
+the gap is, and you can fix it.</p>
+<p>What you want to avoid is what happens without exit criteria: the test runs,
+infrastructure comes up green, nobody measures anything, and the ticket closes. That&rsquo;s
+not a test. That&rsquo;s a ceremony.</p>
+<hr>
+<h2 id="failback-the-test-nobody-runs">Failback: The Test Nobody Runs</h2>
+<p>Failover gets all the attention. Failback is where the data loss actually happens.</p>
+<p>The scenario: your primary region fails at 2pm. You execute failover. The secondary
+becomes primary. Your team operates on the secondary from 2pm to 4pm, two hours of
+transactions, updates, customer activity. The primary region recovers at 4pm. Your
+runbook says &ldquo;fail back to primary.&rdquo; Someone follows the runbook.</p>
+<p>If that runbook doesn&rsquo;t have an explicit step that says &ldquo;check replication lag / Last
+Sync Time before executing failback, and do not proceed until secondary-to-primary
+replication covers the full 2pm–4pm window,&rdquo; then you are about to permanently lose
+two hours of production data. The old primary comes back with stale state, you cut
+over to it, and everything written between 2pm and 4pm is gone.</p>
+<p>Azure&rsquo;s own documentation explicitly calls this out for storage: check Last Sync Time
+before failing back. Teams still skip it, usually because they&rsquo;re under pressure to
+restore the primary and the urgency overwhelms the procedure.</p>
+<p>For SQL, the old primary reconnects as a secondary after a failover and begins redo
+replication from the current primary. The replication lag clock is running. You need
+to watch <code>replication_lag_sec</code> and wait until it reaches zero, or at least until
+it&rsquo;s within your RPO tolerance, before initiating failback. Under heavy write load,
+this can take longer than you expect.</p>
+<p>For storage, you need <code>geoReplicationStats.lastSyncTime</code> on the new primary (which
+was your secondary) to advance past the point at which you wrote your last significant
+transaction during the incident window. If it hasn&rsquo;t, failing back means losing
+everything written after that sync point.</p>
+<p>The specific test to run: initiate a full failover, then deliberately generate 30
+minutes of realistic write activity against the new primary, simulating what your
+application would actually do during a real incident. Then attempt to execute your
+failback procedure. This single test reveals more about your DR plan&rsquo;s real-world
+viability than any number of clean failover drills, because it answers the questions
+that matter: does your runbook have the right lag-check steps? Does your team know to
+wait? Does your observability correctly surface the re-replication state so the
+decision to fail back is made with real data rather than impatience?</p>
+<p>Failback is not the reverse of failover. It&rsquo;s a separate procedure with separate
+failure modes, separate timing considerations, and separate exit criteria. It needs
+its own test, scheduled separately, with its own pass/fail definition.</p>
+<hr>
+<h2 id="a-dr-plan-not-tested-is-a-dr-plan-that-fails">A DR Plan Not Tested Is a DR Plan That Fails</h2>
+<p>The tools are there. Azure Monitor surfaces <code>replication_lag_sec</code> as a native metric
+with one-minute granularity. <code>Last Sync Time</code> is a CLI query away. Front Door health
+probe logs tell you exactly which POP saw which origin fail and when. Traffic Manager
+exposes the full failover formula and lets you tune every variable in it.</p>
+<p>The gap isn&rsquo;t tooling. It&rsquo;s not even time or budget, really. It&rsquo;s the willingness to
+define what failure looks like before you start, and then to actually call the test
+failed when the numbers don&rsquo;t match.</p>
+<p>So before the next DR test: write three numbers on a whiteboard. The user-visible RTO.
+The actual data loss window your architecture can sustain under realistic load. The
+time to a safe, confirmed failback with no data lost from the incident window. Run
+the test. Measure those numbers. Put the results next to the commitments.</p>
+<p>If they match, great. You have evidence. Your DR plan is real.</p>
+<p>If they don&rsquo;t, now you have something more valuable than a passing test: you have
+the specific information needed to make the plan actually work.</p>
+<p>That&rsquo;s a DR test. Everything else is a drill.</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/azure/">azure</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/disaster-recovery/">disaster-recovery</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/sre/">sre</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/resilience/">resilience</a>
+
+  <a class="tag tag--primary tag--small" href="http://localhost:1313/tags/infrastructure-as-code/">infrastructure-as-code</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" data-tooltip="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS" aria-label="PREVIOUS: The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2026 Ebby Peter. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/" data-tooltip="The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS" aria-label="PREVIOUS: The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fyour-dr-plan-has-never-been-tested%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fyour-dr-plan-has-never-been-tested%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fyour-dr-plan-has-never-been-tested%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fyour-dr-plan-has-never-been-tested%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=http%3A%2F%2Flocalhost%3A1313%2F2026%2F02%2Fyour-dr-plan-has-never-been-tested%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/04e15727a8955157da62cbca910e7fb5?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ebby Peter</h4>
+    
+      <div id="about-card-bio">Blueprint. Build. Ship. Repeat!</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Cloud Architect | Cloud Consultant | Cloud Enthusiast
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        Wellington, New Zealand
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('http://localhost:1313/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="http://localhost:1313/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

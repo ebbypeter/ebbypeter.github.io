@@ -6,8 +6,43 @@
     <description>Recent content in Tags on Ebby Builds!</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Azure</title>
+      <link>http://localhost:1313/tags/azure/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/azure/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Disaster-Recovery</title>
+      <link>http://localhost:1313/tags/disaster-recovery/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/disaster-recovery/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Infrastructure-as-Code</title>
+      <link>http://localhost:1313/tags/infrastructure-as-code/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/infrastructure-as-code/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Resilience</title>
+      <link>http://localhost:1313/tags/resilience/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/resilience/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sre</title>
+      <link>http://localhost:1313/tags/sre/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/sre/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Apim</title>
       <link>http://localhost:1313/tags/apim/</link>
@@ -20,13 +55,6 @@
       <link>http://localhost:1313/tags/app-gateway/</link>
       <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/app-gateway/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Azure</title>
-      <link>http://localhost:1313/tags/azure/</link>
-      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/azure/</guid>
       <description></description>
     </item>
     <item>
@@ -79,24 +107,10 @@
       <description></description>
     </item>
     <item>
-      <title>Resilience</title>
-      <link>http://localhost:1313/tags/resilience/</link>
-      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/resilience/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>Retry-Logic</title>
       <link>http://localhost:1313/tags/retry-logic/</link>
       <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/retry-logic/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Sre</title>
-      <link>http://localhost:1313/tags/sre/</link>
-      <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/sre/</guid>
       <description></description>
     </item>
     <item>
