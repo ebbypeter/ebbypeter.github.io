@@ -11,8 +11,8 @@ tags:
   - slo
   - platform-engineering
 categories:
-  - site-reliability-engineering
-  - systems-design
+  - Site Reliability Engineering
+  - Systems Design
 summary: "Alert fatigue isn't a people problem, it's a product design failure. Your on-call engineers are the users. Here's why noisy alerts are biologically inevitable under bad design, and what treating alerting as a product actually looks like."
 ---
 
