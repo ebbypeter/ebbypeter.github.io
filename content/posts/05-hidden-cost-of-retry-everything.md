@@ -13,7 +13,7 @@ tags:
   - azure-sql
   - event-hubs
   - apim
-  - app-gateway
+  - application-gateway
   - azure-front-door
   - sre
 categories:
