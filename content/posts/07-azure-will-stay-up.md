@@ -16,7 +16,7 @@ categories:
 summary: "Azure's infrastructure is genuinely reliable. That's exactly the problem. The more stable the platform, the easier it is to mistake platform health for system health, and that gap is where the expensive outages live. Availability is an architectural choice, not a SKU."
 ---
 
-*MThe Azure status page is green. Your users are getting errors. Somewhere in the gap between those two facts is the outage nobody planned for.*
+*The Azure status page is green. Your users are getting errors. Somewhere in the gap between those two facts is the outage nobody planned for.*
 
 ---
 The migration is done. The post-project retrospective is done. Leadership has signed off on the cloud transformation, the slide deck declared victory, and somewhere in a wiki that nobody updates anymore there's a note confirming that zone redundancy is enabled and geo-replication is configured. The team moves on to the next thing.

@@ -6,8 +6,22 @@
     <description>Recent content in Architecture on Ebby Builds!</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/categories/architecture/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Azure Will Stay Up. Your System Is a Different Story.</title>
+      <link>http://localhost:1313/2026/02/azure-will-stay-up.-your-system-is-a-different-story./</link>
+      <pubDate>Tue, 17 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/02/azure-will-stay-up.-your-system-is-a-different-story./</guid>
+      <description>Azure&amp;rsquo;s infrastructure is genuinely reliable. That&amp;rsquo;s exactly the problem. The more stable the platform, the easier it is to mistake platform health for system health, and that gap is where the expensive outages live. Availability is an architectural choice, not a SKU.</description>
+    </item>
+    <item>
+      <title>Your DR Plan Has Never Been Tested</title>
+      <link>http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/</link>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2026/02/your-dr-plan-has-never-been-tested/</guid>
+      <description>Most Azure DR tests confirm the secondary came up. They don&amp;rsquo;t confirm your RTO is real, your RPO commitment holds under load, or that failback won&amp;rsquo;t silently destroy the incident window. Here&amp;rsquo;s how to test DR honestly, with exit criteria that actually prove the plan works.</description>
+    </item>
     <item>
       <title>The Hidden Cost of &#39;Retry Everything&#39;: How Naive Retry Logic Creates a Self-Inflicted DDoS</title>
       <link>http://localhost:1313/2026/02/the-hidden-cost-of-retry-everything-how-naive-retry-logic-creates-a-self-inflicted-ddos/</link>
