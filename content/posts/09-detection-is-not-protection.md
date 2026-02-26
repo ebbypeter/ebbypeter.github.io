@@ -28,39 +28,39 @@ Detection mode is not a weaker version of protection. It is the complete absence
 
 ---
 
-## What happens to a request
+## What actually happens to a request
 
-The WAF engine in Detection mode does its job. A request arrives, the engine evaluates it against the full managed rule set, and an anomaly score accumulates. Azure WAF uses OWASP anomaly scoring by default, each matched rule contributes to a running total based on severity. A Critical rule match contributes 5 points. A single SQL injection hit clears the threshold.
+The WAF engine in Detection mode does its job. A request arrives, the engine inspects it against the full managed rule set, and an anomaly score accumulates. Azure WAF uses OWASP anomaly scoring by default — each matched rule contributes based on severity. A Critical rule match contributes 5 points. One SQL injection hit clears the threshold.
 
-Here is where the modes diverge.
+Here is where the modes split.
 
-In Prevention mode, a score of 5 or above triggers a block. The WAF returns a 403, the connection closes, and the request never reaches your backend. In Detection mode, the same score triggers a log entry. The WAF writes the event, notes the matched rules, records the anomaly score, and then forwards the request to your backend unchanged. The attacker gets through. Whatever they were attempting, they succeeded.
+In Prevention mode, a score of 5 or above triggers a block. The WAF returns a 403, closes the connection, and the request never reaches your backend. In Detection mode, the same score triggers a log entry. The engine writes the event, records the matched rules, and then forwards the request to your application unchanged. The attacker gets through. Whatever they were attempting, they succeeded.
 
-The engine ran. The inspection happened. The WAF just didn't do anything with the result.
+The engine ran. The inspection happened. The WAF just didn't act on any of it.
 
-There is a narrow exception worth knowing about: a small set of mandatory rules, requests that fail body parsing, requests that exceed the configured body size limit, will cause a block even in Detection mode. These rules can't be disabled. But they're plumbing-level behaviours, not security controls. They don't protect against SQL injection, XSS, path traversal, or anything in the OWASP Top 10. The exception exists, it's just not relevant to any real attack surface.
+There is a narrow exception: a small set of mandatory rules covering body parsing failures and size limit violations will block even in Detection mode. But those are plumbing behaviours, not security controls. They don't protect against anything in the OWASP Top 10. The exception exists; it just doesn't matter for any real attack surface.
 
-The one-line summary: the WAF engine runs, inspects everything, accumulates the score, and then steps aside.
-
----
-
-## How Detection mode becomes permanent
-
-Every new WAF policy in the Azure portal defaults to Detection mode. That's intentional, Microsoft's own guidance says to start in Detection, observe real traffic, tune out false positives, then switch to Prevention. It's sensible advice for initial deployment.
-
-The problem is what happens after.
-
-Microsoft's FAQ on enabling WAF for Front Door describes a multi-step tuning process that "might take several weeks." What it doesn't mention is that there's no timer. No alert. No Azure Policy gate that fires when a WAF sits in Detection mode past its welcome. The tuning process has no formal exit criteria, which means it has no exit. Teams tune for a while, see alert volume drop, feel like progress is being made, and then move on to the next thing. Nobody formally closes the loop. Detection mode becomes the permanent state not through deliberate choice, but through the absence of one.
-
-There's a specific cognitive trap buried in this: in Detection mode, a quiet WAF proves nothing. If you're not seeing many threat alerts, you cannot distinguish between "attacks aren't happening" and "attacks are happening and going straight through." The WAF will never surface a blocked request, because it never blocks one. The silence is not a signal. It's just silence.
-
-Detection mode also trains teams to ignore WAF alerts, which compounds the problem in a non-obvious way. Because everything gets logged and nothing gets blocked, the alerts generated in Detection mode have no operational consequence. Over weeks and months, teams tune the alerting down, tighten the response criteria, or just stop routing WAF alerts to anyone who acts on them. When you eventually do switch to Prevention mode and need that alerting channel to catch false positives causing user impact, the signal has already been devalued. You've spent months conditioning your team to treat WAF events as background noise.
+![Detection vs Prevention](/images/posts/waf_prevention_detection.svg)
 
 ---
 
-## The log that actively misleads
+## The default that sets the trap
 
-This is the part that causes the most concrete operational damage, and it almost never gets explained clearly.
+Every new WAF policy in the Azure portal defaults to Detection mode. This is intentional. Microsoft's guidance says start in Detection mode, observe real traffic, tune out false positives, then switch to Prevention. That's sound advice for initial deployment. The problem is what happens after.
+
+Microsoft's FAQ on enabling WAF for Front Door acknowledges the tuning process "might take several weeks." What it doesn't tell you is that there's no timer, no alert, and no Azure Policy gate that fires when a WAF sits in Detection mode past its welcome. The tuning loop has no formal exit criteria, which in practice means it has no exit.
+
+The pattern repeats across organisations: team deploys WAF in Detection mode, reviews alerts, creates a few exclusions, sees alert volume drop, feels like progress is being made, and moves on to the next priority. Nobody closes the loop. Detection mode becomes permanent not through deliberate choice, but through the absence of one.
+
+What makes this hard to catch is that Detection mode offers no signal that attacks are succeeding. A quiet Detection-mode WAF and an effective Prevention-mode WAF look identical in one metric: zero user impact from blocked traffic. You cannot distinguish "no attacks are happening" from "attacks are happening and going straight through." The silence proves nothing.
+
+Detection mode also trains teams to ignore WAF alerts, which creates a second-order problem. Because everything gets logged and nothing ever blocks, alerts in Detection mode have no operational consequence. Over months, teams tune the alerting down or stop routing WAF events to anyone who acts on them. When you eventually flip to Prevention and need that channel to surface false positives causing real user impact, you've spent months conditioning your team to treat WAF alerts as noise.
+
+---
+
+## The log that misleads
+
+This is where the most concrete operational damage happens.
 
 When a request matches a WAF rule in Detection mode, the log entry looks like this:
 
@@ -70,9 +70,9 @@ policyMode_s : Detection
 ruleName_s   : DefaultRuleSet-1.0-SQLI-942430
 ```
 
-`action_s = "Block"`. A reasonable engineer reads that and concludes the request was blocked. It wasn't. In Detection mode, `action_s = "Block"` means "this is what would have happened in Prevention mode." The request went to your backend. Microsoft's own documentation includes a sample log table showing exactly this combination, `Action = Block`, `Mode = Detection`, as normal expected output. It's documented, just not explained clearly enough to prevent the misread.
+`action_s = "Block"`. A reasonable engineer reads that and concludes the request was blocked. It wasn't. In Detection mode, `action_s = "Block"` means "this is what would have happened in Prevention mode." The request went to your backend. Microsoft's own documentation includes a sample log table showing exactly this combination as normal expected output. It's documented. It's just not explained with enough emphasis to prevent the misread in practice.
 
-The practical consequence: teams write KQL queries to verify their WAF is doing its job.
+The consequence is queries like this:
 
 ```kql
 AzureDiagnostics
@@ -80,63 +80,41 @@ AzureDiagnostics
 | where action_s == "Block"
 ```
 
-In Detection mode, this query returns results. Every single result in that output represents a request that reached your backend. The query is syntactically correct. The interpretation is completely wrong.
+In Detection mode, this returns results. Every single result represents a request that reached your application. The query is syntactically correct. The interpretation is completely wrong.
 
-The fix is straightforward, but only if you know the trap is there:
+The fix is straightforward once you know the trap:
 
 ```kql
 AzureDiagnostics
 | where Category == "FrontdoorWebApplicationFirewallLog"
 | project TimeGenerated,
-          RuleID      = ruleName_s,
-          Action      = action_s,
-          Mode        = policyMode_s,
-          ClientIP    = clientIp_s,
-          URI         = requestUri_s
+          RuleID   = ruleName_s,
+          Action   = action_s,
+          Mode     = policyMode_s,
+          ClientIP = clientIp_s,
+          URI      = requestUri_s
 | where Action == "Block" and Mode == "Prevention"
 ```
 
-Always project `policyMode_s` and filter on it explicitly. A `Block` action in `Prevention` mode means something was stopped. A `Block` action in `Detection` mode means something was observed and passed through. They are not the same event and should never be counted together in a dashboard or fed into the same alert.
+Always project `policyMode_s` and filter on it explicitly. A `Block` in `Prevention` mode means something was stopped. A `Block` in `Detection` mode means something was observed and waved through. They are not the same event and should never be counted together in a dashboard or alert rule.
 
-There's a second layer to this for anyone running modern rule sets. With anomaly scoring (the default for CRS 3.x and DRS 2.1+), individual rule hits log as `action_s = "Matched"`, not "Block." The terminal rule, 949110, fires when the accumulated score hits the threshold and logs as "Blocked" in Prevention mode or "Detected" in Detection mode. So for a single request that triggers multiple rules, you'll see a mix of "Matched" entries and one terminal entry, and the terminal entry is the only one that tells you whether anything actually happened. SIEM correlation rules built on `action_s == "Block"` without the mode filter can end up capturing intermediate match events, not terminal decisions, on top of the mode confusion.
-
-If you've built incident response runbooks, Sentinel analytics rules, or security dashboards on WAF logs without explicitly filtering on `policyMode_s`, there is a real possibility that your "blocked attacks" count includes a significant number of attacks that weren't blocked.
-
----
-
-## The hybrid protection illusion
-
-Teams that have done some WAF work often push back here: "we have custom rules that block, rate limiting, IP denylists. We're not completely unprotected."
-
-This is partially true. It's also more dangerous than no protection story at all.
-
-WAF mode governs managed rule behaviour. Custom rules with a Block action operate on their own terms, a rate limit rule that fires at 1,000 requests per minute from a single IP will still block in Detection mode. Your IP denylist custom rule will still block the IPs you've explicitly listed.
-
-What those custom rules don't touch is the entire managed rule surface: the OWASP Core Rule Set, the Microsoft Threat Intelligence rules, the DRS rules covering SQL injection, XSS, path traversal, protocol violations. All of that is Detection-only. An attacker who stays under your rate limit and isn't on your denylist, which describes most attack traffic, passes straight through every OWASP control you thought you had.
-
-The partial protection story is the dangerous version because it closes the conversation. "We have blocking rules" is true and misleading in the same sentence. The question isn't whether any rules block. It's whether the rules covering the attack surface you care about block. In Detection mode, they don't.
+If your SIEM correlation rules, Sentinel analytics, or security dashboards were built on WAF logs without filtering on `policyMode_s`, your "blocked attacks" count almost certainly includes attacks that weren't blocked.
 
 ---
 
 ## Why nobody catches it
 
-The failure pattern is consistent enough that the mechanisms are worth naming.
+Security posture tooling reports resource existence. "WAF: Enabled" is a claim about whether a WAF policy is associated with a resource. It says nothing about mode, nothing about whether Diagnostic Settings are configured (without which Detection mode is completely invisible), and nothing about whether the WAF is actually on the traffic path. Most compliance reviews stop at existence. Nobody asks `policyMode_s`.
 
-Security posture dashboards report resource existence. "WAF: Enabled" is a factual claim about whether a WAF policy exists. It says nothing about mode, nothing about whether Diagnostic Settings are configured (without which Detection mode produces no logs at all, making it completely invisible), and nothing about whether the WAF is actually on the traffic path between the internet and your origin. Most compliance reviews stop at "does a WAF exist." Nobody runs the query.
+PCI DSS Requirement 6.4 mandates WAF protection for internet-facing applications. In most assessments, that translates to: is there a WAF? A Detection-mode WAF satisfies the question. Whether it's blocking anything is a different question, and it usually isn't asked.
 
-PCI DSS Requirement 6.4 requires WAF protection for internet-facing applications. In practice, most assessors confirm WAF presence. Whether the WAF is actually blocking anything is a different question, and it's usually not the one being asked. A Detection-mode WAF may satisfy the checkbox while delivering none of the protection the control was designed to require.
-
-The origin exposure issue makes all of this worse. If your Application Gateway or Front Door origin isn't locked down to only accept traffic from those services, which is a separate step, not automatic, then the WAF can be bypassed entirely by anyone who finds the origin IP. Detection mode creates just enough visible activity to feel like security is happening, which delays teams from doing the harder, more impactful work of actually restricting origin access. The WAF isn't just failing to protect. It's occupying the team's attention while the real attack surface stays open.
-
-Finally: Azure has built-in Policy definitions specifically designed to enforce WAF Prevention mode. Two of them, in fact, one for Application Gateway, one for Front Door. They can audit or deny WAF policies not running in Prevention mode. They're sitting in the built-in policy library, unused, in most environments. The enforcement mechanism that would close the loop exists. It just hasn't been deployed.
+There's also an enforcement mechanism that almost nobody has deployed. Azure ships two built-in Policy definitions specifically for this: one requiring a specified WAF mode for Application Gateway, one for Front Door. Both can audit or deny WAF policies not running in Prevention mode. They're sitting in the built-in policy library unused in most environments. The tool to close this gap programmatically exists. It just hasn't been picked up.
 
 ---
 
 ## Getting out
 
-If you suspect your environment has production WAFs in Detection mode, start here.
-
-Find out what you're actually dealing with. This Azure Resource Graph query doesn't depend on log data being configured, it goes straight to the resource properties:
+Start with an inventory that doesn't depend on logs being configured. This Resource Graph query goes directly to resource properties and covers all subscriptions:
 
 ```kql
 Resources
@@ -147,21 +125,13 @@ Resources
 | where mode != "Prevention"
 ```
 
-That gives you the full inventory across subscriptions of WAF policies not in Prevention mode. For environments where logging is configured and you want a log-based view:
+That tells you exactly which WAF policies aren't in Prevention mode, without needing logs to be flowing.
 
-```kql
-AzureDiagnostics
-| where Category in ("FrontdoorWebApplicationFirewallLog", "ApplicationGatewayFirewallLog")
-| summarize count() by policyMode_s, _ResourceId
-```
+Once you know the scope, set a hard tuning deadline. Two to four weeks for a stable application with representative traffic, not "until it feels right." Review logs daily during that window. Define exclusions as code in Bicep or Terraform so they survive managed rule set version upgrades. The Microsoft recommendation to spend "several weeks" in Detection mode applies to initial tuning. It is not an invitation to treat Detection as an indefinite state.
 
-Once you know where you are, set a hard tuning deadline. Two to four weeks for a stable application with representative traffic. Not "until it feels right", a date. Review logs daily during that window, not weekly. Define your exclusions as code in Bicep or Terraform so they survive rule set version upgrades without manual re-entry. The Microsoft recommendation to spend "several weeks" in Detection mode is not an invitation to treat it as indefinite.
+When you flip to Prevention, expect some legitimate requests to get blocked. That's not a sign something went wrong. It's a WAF that's actually enforcing rules. Have a runbook ready: the query to surface what's being blocked, the process for creating a targeted exclusion, and an owner who can approve it quickly. The first week is the hardest part.
 
-When you flip to Prevention mode, expect friction. Some legitimate requests will get blocked. That is not a sign that something went wrong, it's the expected output of a WAF that's actually doing its job. Have a runbook ready before you flip: the KQL query to find what's being blocked, the process for creating a targeted exclusion, and the ownership chain for approving it quickly. The first week in Prevention mode is the hardest. It does not stay that way.
-
-Lock your origin. Regardless of WAF mode, if your origin accepts traffic from anywhere other than your Application Gateway or Front Door, the WAF is bypassable. For Front Door this means Private Link or service tag-based restrictions. For Application Gateway it means no publicly reachable addresses on the backend subnet. Do this at the same time as the Prevention mode switch, not after.
-
-Then deploy the Azure Policy built-ins to enforce Prevention mode going forward, audit first, then deny for new deployments. Wire them into your compliance dashboard. "WAF: Enabled" should mean something.
+Then deploy the Azure Policy built-ins. Audit first, deny for new deployments once you understand the scope. Wire it into your compliance dashboard so "WAF: Enabled" actually means something.
 
 ---
 
@@ -169,8 +139,8 @@ Then deploy the Azure Policy built-ins to enforce Prevention mode going forward,
 
 "Detection" implies something was caught. Nothing was caught.
 
-If this mode had been called "Logging mode" or "Passive mode," teams would treat it as what it is: a temporary diagnostic state with a clear exit. The word "detection" creates a mental model where threats are being identified and presumably managed. That model is wrong. The detection is not connected to any protective action. It's forensic data generation with a security-sounding label, and the label does real damage.
+If this mode were called "Logging mode," engineers would treat it as what it is: a temporary diagnostic state with a clear exit. The word "detection" suggests threats are being identified and handled. That model is wrong. The detection is not connected to any protective action. It's forensic data generation with a security-sounding label, and the label does real damage in the gap between deployment and a tuning deadline that never arrives.
 
-What Detection mode actually is: a logging pipeline that happens to sit in the request path. The WAF inspects traffic, matches rules, accumulates scores, and writes events. Then it waves everything through.
+If your WAF has been in Detection mode for more than a month in production, you don't have a WAF protecting your application. You have detailed logs of exactly which attacks are hitting you, and nothing stopping any of them. That's worth fixing today.
 
-If your WAF has been in Detection mode for more than a month in production, you don't have a WAF. You have detailed logs of exactly what attacks are reaching your application, and nothing stopping any of them.
+What's your WAF policy mode set to right now? It takes about thirty seconds to check, and the answer might surprise you.
