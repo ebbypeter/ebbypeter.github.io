@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="'Courier New', Courier, monospace">
+  <defs>
+    <style>
+      .title        { font-size: 13px; font-weight: 700; fill: #0f172a; letter-spacing: 0.08em; text-transform: uppercase; }
+      .subtitle     { font-size: 10px; fill: #94a3b8; letter-spacing: 0.06em; text-transform: uppercase; }
+      .label-main   { font-size: 12px; font-weight: 700; fill: #0f172a; }
+      .label-sub    { font-size: 10px; fill: #475569; }
+      .label-key    { font-size: 9px; fill: #94a3b8; font-style: italic; }
+      .badge        { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+      .caption      { font-size: 10px; fill: #94a3b8; }
+      .warn         { font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    </style>
+
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6" opacity="0.8"/>
+    </marker>
+
+    <filter id="card-shadow" x="-4%" y="-4%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#cbd5e1" flood-opacity="0.6"/>
+    </filter>
+
+    <filter id="subsystem-shadow" x="-4%" y="-4%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#94a3b8" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="900" height="520" fill="#f8fafc"/>
+
+  <!-- Subtle column bands -->
+  <rect x="0"   y="60" width="300" height="410" fill="#eff6ff" opacity="0.45"/>
+  <rect x="300" y="60" width="300" height="410" fill="#f5f3ff" opacity="0.45"/>
+  <rect x="600" y="60" width="300" height="410" fill="#f0fdf4" opacity="0.45"/>
+
+  <!-- Grid lines -->
+  <g stroke="#e2e8f0" stroke-width="0.8">
+    <line x1="0"   y1="60"  x2="900" y2="60"/>
+    <line x1="0"   y1="470" x2="900" y2="470"/>
+    <line x1="300" y1="60"  x2="300" y2="470"/>
+    <line x1="600" y1="60"  x2="600" y2="470"/>
+  </g>
+
+  <!-- ── Header ── -->
+  <text x="450" y="30" text-anchor="middle" class="title">Azure Application Gateway — Telemetry Architecture</text>
+  <text x="450" y="50" text-anchor="middle" class="subtitle">Three subsystems. Four outputs. No shared primary key.</text>
+
+  <!-- ══════════════════════════════════════════════
+       COLUMN 1 — GATEWAY SUBSYSTEM
+  ══════════════════════════════════════════════ -->
+
+  <!-- Subsystem box -->
+  <rect x="30" y="78" width="240" height="148" rx="5" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.5" filter="url(#subsystem-shadow)"/>
+  <rect x="30" y="78" width="240" height="28" rx="5" fill="#dbeafe"/>
+  <rect x="30" y="96"  width="240" height="10" fill="#dbeafe"/>
+
+  <text x="150" y="97" text-anchor="middle" class="badge" fill="#1d4ed8">Gateway Layer</text>
+
+  <text x="150" y="122" text-anchor="middle" class="label-main">Request routing</text>
+  <text x="150" y="140" text-anchor="middle" class="label-sub">TLS termination / offload</text>
+  <text x="150" y="156" text-anchor="middle" class="label-sub">Rule evaluation &amp; rewrites</text>
+  <text x="150" y="172" text-anchor="middle" class="label-sub">Connection pooling to backends</text>
+  <text x="150" y="190" text-anchor="middle" class="label-sub">TimeTaken · ServerResponseLatency</text>
+
+  <!-- Output arrow -->
+  <line x1="150" y1="226" x2="150" y2="260" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-blue)"/>
+
+  <!-- Access Logs card -->
+  <rect x="46" y="266" width="208" height="72" rx="4" fill="#ffffff" stroke="#bfdbfe" stroke-width="1" filter="url(#card-shadow)"/>
+  <rect x="46" y="266" width="208" height="22" rx="4" fill="#dbeafe"/>
+  <rect x="46" y="278"  width="208" height="10" fill="#dbeafe"/>
+
+  <text x="150" y="282" text-anchor="middle" class="badge" fill="#1d4ed8">Access Logs</text>
+  <text x="150" y="302" text-anchor="middle" class="label-sub">AGWAccessLogs</text>
+  <text x="150" y="316" text-anchor="middle" class="label-key">httpStatus · serverStatus · timeTaken</text>
+  <text x="150" y="330" text-anchor="middle" class="label-key">serverRouted · serverResponseLatency</text>
+
+  <!-- Warning pill -->
+  <rect x="68" y="346" width="164" height="18" rx="9" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="150" y="359" text-anchor="middle" class="warn" fill="#c2410c">⚠ no transactionId in v2</text>
+
+  <!-- Metrics card -->
+  <rect x="46" y="376" width="208" height="72" rx="4" fill="#ffffff" stroke="#bfdbfe" stroke-width="1" filter="url(#card-shadow)"/>
+  <rect x="46" y="376" width="208" height="22" rx="4" fill="#dbeafe"/>
+  <rect x="46" y="388"  width="208" height="10" fill="#dbeafe"/>
+
+  <text x="150" y="392" text-anchor="middle" class="badge" fill="#1d4ed8">Metrics</text>
+  <text x="150" y="412" text-anchor="middle" class="label-sub">Azure Monitor (60s aggregation)</text>
+  <text x="150" y="426" text-anchor="middle" class="label-key">UnhealthyHostCount · FailedRequests</text>
+  <text x="150" y="440" text-anchor="middle" class="label-key">BackendConnectTime · ResponseStatus</text>
+
+  <rect x="68" y="456" width="164" height="18" rx="9" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="150" y="469" text-anchor="middle" class="caption">no per-request context</text>
+
+
+  <!-- ══════════════════════════════════════════════
+       COLUMN 2 — WAF ENGINE
+  ══════════════════════════════════════════════ -->
+
+  <rect x="330" y="78" width="240" height="148" rx="5" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.5" filter="url(#subsystem-shadow)"/>
+  <rect x="330" y="78"  width="240" height="28" rx="5" fill="#ede9fe"/>
+  <rect x="330" y="96"  width="240" height="10" fill="#ede9fe"/>
+
+  <text x="450" y="97" text-anchor="middle" class="badge" fill="#6d28d9">WAF Engine</text>
+
+  <text x="450" y="122" text-anchor="middle" class="label-main">Rule set evaluation (CRS 3.x)</text>
+  <text x="450" y="140" text-anchor="middle" class="label-sub">Anomaly scoring accumulation</text>
+  <text x="450" y="156" text-anchor="middle" class="label-sub">Detection / Prevention modes</text>
+  <text x="450" y="172" text-anchor="middle" class="label-sub">Per-policy enforcement (Global / Listener)</text>
+  <text x="450" y="190" text-anchor="middle" class="label-sub">Separate diagnostic setting required</text>
+
+  <line x1="450" y1="226" x2="450" y2="260" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-blue)"/>
+
+  <!-- Firewall Logs card -->
+  <rect x="346" y="266" width="208" height="72" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" filter="url(#card-shadow)"/>
+  <rect x="346" y="266" width="208" height="22" rx="4" fill="#ede9fe"/>
+  <rect x="346" y="278"  width="208" height="10" fill="#ede9fe"/>
+
+  <text x="450" y="282" text-anchor="middle" class="badge" fill="#6d28d9">Firewall Logs</text>
+  <text x="450" y="302" text-anchor="middle" class="label-sub">AGWFirewallLogs</text>
+  <text x="450" y="316" text-anchor="middle" class="label-key">transactionId · action · ruleId</text>
+  <text x="450" y="330" text-anchor="middle" class="label-key">clientIp · requestUri · details.data</text>
+
+  <!-- Positive badge -->
+  <rect x="368" y="346" width="164" height="18" rx="9" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="450" y="359" text-anchor="middle" class="warn" fill="#15803d">✓ has transactionId</text>
+
+  <!-- Anomaly scoring card -->
+  <rect x="346" y="376" width="208" height="72" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" stroke-dasharray="5 2" filter="url(#card-shadow)"/>
+  <rect x="346" y="376" width="208" height="22" rx="4" fill="#ede9fe"/>
+  <rect x="346" y="388"  width="208" height="10" fill="#ede9fe"/>
+
+  <text x="450" y="392" text-anchor="middle" class="badge" fill="#6d28d9">Anomaly Scoring</text>
+  <text x="450" y="412" text-anchor="middle" class="label-sub">1 blocked request → N log entries</text>
+  <text x="450" y="426" text-anchor="middle" class="label-key">action: Matched  (score accumulates)</text>
+  <text x="450" y="440" text-anchor="middle" class="label-key">action: Blocked  (rule 949110 — useless)</text>
+
+  <rect x="368" y="456" width="164" height="18" rx="9" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="450" y="469" text-anchor="middle" class="warn" fill="#c2410c">tune on Matched, not Blocked</text>
+
+
+  <!-- ══════════════════════════════════════════════
+       COLUMN 3 — HEALTH PROBING
+  ══════════════════════════════════════════════ -->
+
+  <rect x="630" y="78" width="240" height="148" rx="5" fill="#ffffff" stroke="#bbf7d0" stroke-width="1.5" filter="url(#subsystem-shadow)"/>
+  <rect x="630" y="78"  width="240" height="28" rx="5" fill="#dcfce7"/>
+  <rect x="630" y="96"  width="240" height="10" fill="#dcfce7"/>
+
+  <text x="750" y="97" text-anchor="middle" class="badge" fill="#15803d">Health Probing</text>
+
+  <text x="750" y="122" text-anchor="middle" class="label-main">Default probe: / on 127.0.0.1</text>
+  <text x="750" y="140" text-anchor="middle" class="label-sub">Interval 30s · Timeout 30s · Threshold 3</text>
+  <text x="750" y="156" text-anchor="middle" class="label-sub">90-second worst-case detection window</text>
+  <text x="750" y="172" text-anchor="middle" class="label-sub">Custom probes: configurable path / host</text>
+  <text x="750" y="190" text-anchor="middle" class="label-sub">Per backend-pool / HTTP-settings combo</text>
+
+  <line x1="750" y1="226" x2="750" y2="260" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-blue)"/>
+
+  <!-- Backend Health card -->
+  <rect x="646" y="266" width="208" height="72" rx="4" fill="#ffffff" stroke="#bbf7d0" stroke-width="1" filter="url(#card-shadow)"/>
+  <rect x="646" y="266" width="208" height="22" rx="4" fill="#dcfce7"/>
+  <rect x="646" y="278"  width="208" height="10" fill="#dcfce7"/>
+
+  <text x="750" y="282" text-anchor="middle" class="badge" fill="#15803d">Backend Health</text>
+  <text x="750" y="302" text-anchor="middle" class="label-sub">Portal snapshot / API / PowerShell</text>
+  <text x="750" y="316" text-anchor="middle" class="label-key">status: Healthy / Unhealthy / Unknown</text>
+  <text x="750" y="330" text-anchor="middle" class="label-key">not stored in Log Analytics by default</text>
+
+  <!-- Warning pill -->
+  <rect x="668" y="346" width="164" height="18" rx="9" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="750" y="359" text-anchor="middle" class="warn" fill="#c2410c">⚠ point-in-time — not queryable</text>
+
+  <!-- 90s blind spot card -->
+  <rect x="646" y="376" width="208" height="72" rx="4" fill="#ffffff" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="5 2" filter="url(#card-shadow)"/>
+  <rect x="646" y="376" width="208" height="22" rx="4" fill="#dcfce7"/>
+  <rect x="646" y="388"  width="208" height="10" fill="#dcfce7"/>
+
+  <text x="750" y="392" text-anchor="middle" class="badge" fill="#15803d">90-second blind spot</text>
+  <text x="750" y="412" text-anchor="middle" class="label-sub">Backend fails → probes not yet tripped</text>
+  <text x="750" y="426" text-anchor="middle" class="label-key">Backend Health shows: Healthy ✓</text>
+  <text x="750" y="440" text-anchor="middle" class="label-key">Access log shows: 502 · ServerStatus absent</text>
+
+  <rect x="668" y="456" width="164" height="18" rx="9" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="750" y="469" text-anchor="middle" class="caption">correlate via UnhealthyHostCount metric</text>
+
+
+  <!-- ══════════════════════════════════════════════
+       NO-JOIN BARRIERS
+  ══════════════════════════════════════════════ -->
+
+  <!-- Barrier: Access Logs ↔ Firewall Logs -->
+  <line x1="300" y1="278" x2="300" y2="408" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+  <rect x="269" y="326" width="62" height="20" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="300" y="340" text-anchor="middle" font-size="9" font-weight="700" fill="#dc2626" letter-spacing="0.03em">NO KEY</text>
+
+  <!-- Barrier: Firewall Logs ↔ Backend Health -->
+  <line x1="600" y1="278" x2="600" y2="408" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+  <rect x="569" y="326" width="62" height="20" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="600" y="340" text-anchor="middle" font-size="9" font-weight="700" fill="#dc2626" letter-spacing="0.03em">NO KEY</text>
+
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER LEGEND
+  ══════════════════════════════════════════════ -->
+  <line x1="30" y1="490" x2="870" y2="490" stroke="#e2e8f0" stroke-width="1"/>
+
+  <rect x="30"  y="500" width="10" height="10" rx="2" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="46"  y="510" class="caption">Gateway subsystem</text>
+
+  <rect x="160" y="500" width="10" height="10" rx="2" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="176" y="510" class="caption">WAF subsystem</text>
+
+  <rect x="280" y="500" width="10" height="10" rx="2" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="296" y="510" class="caption">Health probing subsystem</text>
+
+  <line x1="460" y1="505" x2="480" y2="505" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="486" y="510" class="caption">No shared key (cannot directly join)</text>
+
+  <line x1="660" y1="505" x2="680" y2="505" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="686" y="510" class="caption">Telemetry output</text>
+
+</svg>
