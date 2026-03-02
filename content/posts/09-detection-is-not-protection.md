@@ -2,6 +2,8 @@
 title: "Detection Is Not Protection: What Azure WAF Detection Mode Actually Does (and Doesn't)"
 draft: false
 date: 2026-03-03
+# coverImage: /images/posts/detection-is-not-protection.png
+# coverMeta: out
 tags: 
   - "azure"
   - "waf"
