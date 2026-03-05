@@ -365,7 +365,21 @@ canonifyurls = true
         distractionFreeMode = false
         enableHotKey = true
         pagerDirection = "first"
-
+    [params.comment.giscus]
+      enable = true
+      repo = "ebbypeter/ebbypeter.github.io"
+      repoID = "MDEwOlJlcG9zaXRvcnkyNjI1NTg4Nw=="
+      category = "Articles / Posts"
+      categoryID = "DIC_kwDOAZCiD84C3pDM"
+      mapping = "title"
+      strict = "0"
+      reactionsEnabled = "1"
+      emitMetadata = "0"
+      inputPosition = "top"
+      theme = "light"
+      lang = "en"
+      loading = "lazy"
+      crossorigin = "anonymous"
   # --------------------
   # Header configuration
   # --------------------

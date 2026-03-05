@@ -47,5 +47,25 @@
         }).render('gitalk')
       })()
     </script>
+  {{ else if .Site.Params.comment.giscus.enable }}
+    <div id="giscus">
+      <noscript>Please enable JavaScript to view the comments powered by Giscus.</noscript>
+    </div>
+    <script src="https://giscus.app/client.js"
+        data-repo="{{ .Site.Params.comment.giscus.repo }}"
+        data-repo-id="{{ .Site.Params.comment.giscus.repoID }}"
+        data-category="{{ .Site.Params.comment.giscus.category }}"
+        data-category-id="{{ .Site.Params.comment.giscus.categoryID }}"
+        data-mapping="{{ .Site.Params.comment.giscus.mapping }}"
+        data-strict="{{ .Site.Params.comment.giscus.strict }}"
+        data-reactions-enabled="{{ .Site.Params.comment.giscus.reactionsEnabled }}"
+        data-emit-metadata="{{ .Site.Params.comment.giscus.emitMetadata }}"
+        data-input-position="{{ .Site.Params.comment.giscus.inputPosition }}"
+        data-theme="{{ .Site.Params.comment.giscus.theme }}"
+        data-lang="{{ .Site.Params.comment.giscus.lang }}"
+        data-loading="{{ .Site.Params.comment.giscus.loading }}"
+        crossorigin="{{ .Site.Params.comment.giscus.crossorigin }}"
+        async>
+    </script>
   {{ end }}
 {{ end }}
