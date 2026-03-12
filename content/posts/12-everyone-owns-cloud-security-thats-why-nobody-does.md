@@ -1,7 +1,7 @@
 ---
 title: "Everyone Owns Cloud Security. That's Why Nobody Does."
 date: 2026-03-24
-draft: true
+draft: false
 description: "The shared responsibility model tells you where the cloud provider's obligations end. It says nothing about which team inside your organisation owns each control on your side of that line. That gap is where breaches live."
 summary: "165 organisations got hit in the Snowflake breach using no novel attack — just stolen credentials, no MFA, and nobody watching. The shared responsibility model didn't fail technically. It failed organisationally. Security wrote the policy. Engineering assumed someone reviewed it. The platform team figured 'managed' meant secured. Procurement filed the SOC 2 and called it done. Nobody lied. Nobody was negligent. They just each assumed someone else had it."
 tags:
