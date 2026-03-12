@@ -1,5 +1,7 @@
 # Hugo output directories
+public/
 /public/
+public/*
 /resources/_gen/
 
 # Hugo build lock
