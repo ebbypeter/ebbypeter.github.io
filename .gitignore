@@ -1,0 +1,38 @@
+# Hugo output directories
+/public/
+/resources/_gen/
+
+# Hugo build lock
+/.hugo_build.lock
+
+# Environment variables
+.env
+.env.*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Node / frontend tooling (if you use npm/yarn for themes or assets)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Go build artifacts (rare, but harmless to ignore)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Temporary files
+*.log
+*.tmp
