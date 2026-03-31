@@ -1,7 +1,7 @@
 ---
 title: "The Architecture Review You Actually Need (But Never Get)"
 date: 2026-03-31
-draft: true
+draft: false
 tags: 
 - "architecture"
 - "sre"
